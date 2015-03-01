@@ -2,30 +2,40 @@
  * Created by kirillvirich on 26.02.15.
  */
 package {
+import assets.gui.Atlas1;
+
+import com.agnither.utils.gui.Resources;
+import com.agnither.utils.gui.atlas.AtlasFactory;
+
 import com.smartfoxserver.v2.SmartFox;
 import com.smartfoxserver.v2.core.SFSEvent;
 import com.smartfoxserver.v2.entities.Room;
-import com.smartfoxserver.v2.requests.CreateRoomRequest;
 import com.smartfoxserver.v2.requests.JoinRoomRequest;
 import com.smartfoxserver.v2.requests.LoginRequest;
 import com.smartfoxserver.v2.requests.game.CreateSFSGameRequest;
 import com.smartfoxserver.v2.requests.game.SFSGameSettings;
 
-import starling.display.Button;
 import starling.display.Sprite;
 import starling.events.Event;
-import starling.textures.Texture;
 
 public class App extends Sprite implements IStartable {
 
     private var _sfs:SmartFox;
 
-    private var _btn:Button;
-    private var _user:Sprite;
+    private var _panel: RoomsPanel;
 
     public function start():void {
+        initGUI();
         initConnection();
-        initUI();
+    }
+
+    private function initGUI():void {
+        Resources.addAtlas("gui", AtlasFactory.fromAtlasMC(Atlas1));
+
+        _panel = new RoomsPanel();
+        addChild(_panel);
+
+        _panel.quickGame.addEventListener(Event.TRIGGERED, onPlay);
     }
 
     private function initConnection():void {
@@ -45,25 +55,19 @@ public class App extends Sprite implements IStartable {
         _sfs.addEventListener(SFSEvent.EXTENSION_RESPONSE, onExtensionResponse);
 
         _sfs.loadConfig();
-    }
 
-    private function initUI():void {
-        _btn = new Button(Texture.fromColor(80, 30, 0xFF000000));
-        _btn.addEventListener(Event.TRIGGERED, onPlay);
-        addChild(_btn);
-        _btn.visible = false;
-
-        _user = new Sprite();
-        addChild(_user);
+        _panel.setState(RoomsPanel.INIT);
     }
 
     private function onPlay(event: Event):void {
-        _btn.visible = false;
+        _panel.setState(RoomsPanel.JOINED);
         var room:Room = null;
-        for (var i:int = 0; i < _sfs.roomList.length; i++) {
-            var roomItem:Room = _sfs.roomList[i] as Room;
-            trace(roomItem.name, roomItem.id, roomItem.groupId, roomItem.capacity, roomItem.isGame);
-            if (roomItem.groupId == "game" && roomItem.userCount < roomItem.maxUsers) {
+
+        var gameRooms: Array = _sfs.getRoomListFromGroup("game");
+        for (var i:int = 0; i < gameRooms.length; i++) {
+            var roomItem:Room = gameRooms[i] as Room;
+            trace(roomItem.name, roomItem.id, roomItem.capacity, roomItem.isGame);
+            if (roomItem.userCount < roomItem.maxUsers) {
                 room = roomItem;
 //                sfs.send( new JoinRoomRequest( "Game" ) );
                 break;
@@ -75,9 +79,8 @@ public class App extends Sprite implements IStartable {
 
         if (room) {
             _sfs.send(new JoinRoomRequest(room.name));
-        }
-        else {
-            var roomName:String = "Game_" + String(Math.random() * 100000);
+        } else {
+            var roomName:String = "Game_" + uint(Math.random() * uint.MAX_VALUE);
             roomName = roomName.substr(0, 32);
             trace("CREATE ROOM NAMED", roomName);
 
@@ -131,7 +134,7 @@ public class App extends Sprite implements IStartable {
 
     private function onLogin(event:SFSEvent):void {
         trace(event);
-        _btn.visible = true;
+        _panel.setState(RoomsPanel.LOGGED);
     }
 
     private function onConnectionLost(event:SFSEvent):void {
