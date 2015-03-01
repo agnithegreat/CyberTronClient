@@ -8,7 +8,7 @@
 <SmartFoxConfig>
 
 	<!-- Mandatory Settings -->
-	<ip>212.109.219.65</ip>
+	<ip>127.0.0.1</ip>
 	<port>9933</port>
 	<zone>CyberTron</zone>
 	<!-- End Mandatory Settings -->
