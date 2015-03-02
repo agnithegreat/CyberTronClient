@@ -18,6 +18,8 @@ import com.smartfoxserver.v2.requests.game.SFSGameSettings;
 import starling.display.Sprite;
 import starling.events.Event;
 
+import view.field.FieldView;
+
 import view.lobby.LobbyPanel;
 import view.room.RoomPanel;
 
@@ -31,6 +33,7 @@ public class App extends Sprite implements IStartable {
 
     private var _lobbyPanel: LobbyPanel;
     private var _roomPanel: RoomPanel;
+    private var _fieldView: FieldView;
 
     public function start():void {
         initGUI();
@@ -42,16 +45,22 @@ public class App extends Sprite implements IStartable {
 
         _lobbyPanel = new LobbyPanel();
         addChild(_lobbyPanel);
-        _lobbyPanel.width = 250;
-        _lobbyPanel.height = 500;
         _lobbyPanel.quickGame.addEventListener(Event.TRIGGERED, onPlay);
+        _lobbyPanel.width = 220;
+        _lobbyPanel.height = stage.stageHeight;
 
         _roomPanel = new RoomPanel();
         addChild(_roomPanel);
+        _roomPanel.width = 220;
+        _roomPanel.height = stage.stageHeight;
+        _roomPanel.x = stage.stageWidth - _roomPanel.width;
 
-        _roomPanel.x = 550;
-        _roomPanel.width = 250;
-        _roomPanel.height = 500;
+        _fieldView = new FieldView();
+        addChild(_fieldView);
+        _fieldView.x = 250;
+        _fieldView.y = 100;
+        _fieldView.width = stage.stageWidth - _fieldView.x*2;
+        _fieldView.height = stage.stageHeight - _fieldView.y*2;
     }
 
     private function initConnection():void {

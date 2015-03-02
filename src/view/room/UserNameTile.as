@@ -7,10 +7,10 @@ import assets.gui.UserNameView;
 import com.agnither.utils.gui.components.AbstractComponent;
 import com.agnither.utils.gui.components.Label;
 
-public dynamic class UserNameTile extends AbstractComponent {
+public class UserNameTile extends AbstractComponent {
 
     public function get userName():Label {
-        return this.userName_label;
+        return _children.userName_label;
     }
 
     override public function set width(value: Number):void {

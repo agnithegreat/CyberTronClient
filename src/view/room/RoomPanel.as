@@ -10,26 +10,26 @@ import com.agnither.utils.gui.components.Label;
 import com.agnither.utils.gui.components.Scale9Picture;
 import com.smartfoxserver.v2.entities.User;
 
-public dynamic class RoomPanel extends AbstractComponent {
+public class RoomPanel extends AbstractComponent {
 
     public function get roomBack():Scale9Picture {
-        return this.back;
+        return _children.back;
     }
 
     public function get roomContainer():Scale9Picture {
-        return this.container;
+        return _children.container;
     }
 
     public function get roomUsersNames():AbstractComponent {
-        return this.userNames;
+        return _children.userNames;
     }
 
     public function get roomTitle():Label {
-        return this.room_title;
+        return _children.room_title;
     }
 
     public function get quickGame():Button {
-        return this.btn_quickGame;
+        return _children.btn_quickGame;
     }
 
     override public function set width(value: Number):void {
@@ -61,10 +61,9 @@ public dynamic class RoomPanel extends AbstractComponent {
 
         roomTitle.text = "Room";
 
-        quickGame.button_label.text = "Quick Game";
         quickGame.visible = false;
 
-        _tileY = roomUsersNames.user2.y - roomUsersNames.user1.y;
+        _tileY = roomUsersNames.getChild("user2").y - roomUsersNames.getChild("user1").y;
         clearUsers();
     }
 

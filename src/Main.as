@@ -3,7 +3,7 @@
  */
 package {
 
-[SWF (frameRate=60, width=800, height=600)]
+[SWF (frameRate=60, width=1024, height=768)]
 public class Main extends StarlingMainBase {
 
     public function Main() {
