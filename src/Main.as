@@ -9,5 +9,11 @@ public class Main extends StarlingMainBase {
     public function Main() {
         super(App);
     }
+
+    override protected function initializeStarling():void {
+        super.initializeStarling();
+
+        showStats = true;
+    }
 }
 }
