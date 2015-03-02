@@ -1,7 +1,7 @@
 /**
  * Created by kirillvirich on 02.03.15.
  */
-package view {
+package view.room {
 import assets.gui.UserNameView;
 
 import com.agnither.utils.gui.components.AbstractComponent;

@@ -18,13 +18,19 @@ import com.smartfoxserver.v2.requests.game.SFSGameSettings;
 import starling.display.Sprite;
 import starling.events.Event;
 
-import view.UsersPanel;
+import view.lobby.LobbyPanel;
+import view.room.RoomPanel;
 
 public class App extends Sprite implements IStartable {
 
+    public static const INIT: String = "init";
+    public static const LOGGED: String = "logged";
+    public static const JOINED: String = "joined";
+
     private var _sfs:SmartFox;
 
-    private var _panel: UsersPanel;
+    private var _lobbyPanel: LobbyPanel;
+    private var _roomPanel: RoomPanel;
 
     public function start():void {
         initGUI();
@@ -34,13 +40,18 @@ public class App extends Sprite implements IStartable {
     private function initGUI():void {
         Resources.addAtlas("gui", AtlasFactory.fromAtlasMC(Atlas1));
 
-        _panel = new UsersPanel();
-        addChild(_panel);
+        _lobbyPanel = new LobbyPanel();
+        addChild(_lobbyPanel);
+        _lobbyPanel.width = 250;
+        _lobbyPanel.height = 500;
+        _lobbyPanel.quickGame.addEventListener(Event.TRIGGERED, onPlay);
 
-        _panel.width = 300;
-        _panel.height = 400;
+        _roomPanel = new RoomPanel();
+        addChild(_roomPanel);
 
-        _panel.quickGame.addEventListener(Event.TRIGGERED, onPlay);
+        _roomPanel.x = 550;
+        _roomPanel.width = 250;
+        _roomPanel.height = 500;
     }
 
     private function initConnection():void {
@@ -62,11 +73,11 @@ public class App extends Sprite implements IStartable {
 
         _sfs.loadConfig();
 
-        _panel.setState(UsersPanel.INIT);
+        _lobbyPanel.setState(INIT);
     }
 
     private function onPlay(event: Event):void {
-        _panel.setState(UsersPanel.JOINED);
+        _lobbyPanel.setState(JOINED);
         var room:Room = null;
 
         var gameRooms: Array = _sfs.getRoomListFromGroup("game");
@@ -75,12 +86,8 @@ public class App extends Sprite implements IStartable {
             trace(roomItem.name, roomItem.id, roomItem.capacity, roomItem.isGame);
             if (roomItem.userCount < roomItem.maxUsers) {
                 room = roomItem;
-//                sfs.send( new JoinRoomRequest( "Game" ) );
                 break;
             }
-//            if ((sfs.roomList[i] as Room).name == name_ti.text) {
-//                break;
-//            }
         }
 
         if (room) {
@@ -91,7 +98,6 @@ public class App extends Sprite implements IStartable {
             trace("CREATE ROOM NAMED", roomName);
 
             var settings: SFSGameSettings = new SFSGameSettings(roomName);
-//            var settings = new SFSGameSettings("Game");
             settings.groupId = "game";
 //            settings.isGame = true;
             settings.maxUsers = 4;
@@ -101,12 +107,7 @@ public class App extends Sprite implements IStartable {
             settings.notifyGameStarted = true;
 
             _sfs.send(new CreateSFSGameRequest(settings));
-//            _sfs.send( new CreateRoomRequest(settings, true) );
         }
-//         sfs.send( new JoinRoomRequest((sfs.roomList[0] as Room).name) );
-//        var data : String =
-
-
     }
 
     private function onExtensionResponse(event:SFSEvent):void {
@@ -119,12 +120,12 @@ public class App extends Sprite implements IStartable {
 
     private function onUserEnterRoom(event:SFSEvent):void {
         var room:Room = event.params.room;
-        _panel.showUsers(room.userList);
+        _roomPanel.showUsers(room.userList);
     }
 
     private function onUserExitRoom(event:SFSEvent):void {
         var room:Room = event.params.room;
-        _panel.showUsers(room.userList);
+        _roomPanel.showUsers(room.userList);
     }
 
     private function onRoomJoinError(event:SFSEvent):void {
@@ -135,7 +136,9 @@ public class App extends Sprite implements IStartable {
         var room:Room = event.params.room;
         trace(room.name, room.id, room.userList);
 
-        _panel.showUsers(room.userList);
+        _lobbyPanel.showRooms(_sfs.roomList);
+        _roomPanel.showRoom(room.name);
+        _roomPanel.showUsers(room.userList);
     }
 
     private function onPingPong(event:SFSEvent):void {
@@ -148,7 +151,8 @@ public class App extends Sprite implements IStartable {
 
     private function onLogin(event:SFSEvent):void {
         trace(event);
-        _panel.setState(UsersPanel.LOGGED);
+        _lobbyPanel.setState(LOGGED);
+        _lobbyPanel.showRooms(_sfs.roomList);
     }
 
     private function onConnectionLost(event:SFSEvent):void {

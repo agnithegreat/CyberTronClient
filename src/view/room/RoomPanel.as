@@ -1,19 +1,16 @@
 /**
  * Created by desktop on 01.03.2015.
  */
-package view {
+package view.room {
 import assets.gui.UsersPanelView;
 
 import com.agnither.utils.gui.components.AbstractComponent;
 import com.agnither.utils.gui.components.Button;
+import com.agnither.utils.gui.components.Label;
 import com.agnither.utils.gui.components.Scale9Picture;
 import com.smartfoxserver.v2.entities.User;
 
-public dynamic class UsersPanel extends AbstractComponent {
-
-    public static const INIT: String = "init";
-    public static const LOGGED: String = "logged";
-    public static const JOINED: String = "joined";
+public dynamic class RoomPanel extends AbstractComponent {
 
     public function get roomBack():Scale9Picture {
         return this.back;
@@ -27,6 +24,10 @@ public dynamic class UsersPanel extends AbstractComponent {
         return this.userNames;
     }
 
+    public function get roomTitle():Label {
+        return this.room_title;
+    }
+
     public function get quickGame():Button {
         return this.btn_quickGame;
     }
@@ -34,7 +35,8 @@ public dynamic class UsersPanel extends AbstractComponent {
     override public function set width(value: Number):void {
         roomBack.width = value;
         roomContainer.width = roomBack.width - roomContainer.x*2;
-        quickGame.x = (roomBack.width-quickGame.width)/2;
+        roomTitle.width = roomContainer.width;
+        roomTitle.x = roomContainer.x;
     }
     override public function get width():Number {
         return roomBack.width;
@@ -43,7 +45,6 @@ public dynamic class UsersPanel extends AbstractComponent {
     override public function set height(value: Number):void {
         roomBack.height = value;
         roomContainer.height = roomBack.height - roomContainer.y*2;
-        quickGame.y = roomContainer.height-quickGame.height;
     }
     override public function get height():Number {
         return roomBack.height;
@@ -51,21 +52,24 @@ public dynamic class UsersPanel extends AbstractComponent {
 
     private var _tileY: int;
 
-    public function UsersPanel() {
+    public function RoomPanel() {
         super();
     }
 
     override protected function initialize():void {
         createFromFlash(UsersPanelView, "gui");
 
+        roomTitle.text = "Room";
+
         quickGame.button_label.text = "Quick Game";
+        quickGame.visible = false;
 
         _tileY = roomUsersNames.user2.y - roomUsersNames.user1.y;
         clearUsers();
     }
 
-    public function setState(state: String):void {
-        quickGame.visible = state == LOGGED;
+    public function showRoom(name: String):void {
+        roomTitle.text = name;
     }
 
     public function showUsers(list: Array /* of User */):void {
