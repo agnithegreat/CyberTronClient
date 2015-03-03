@@ -9,22 +9,22 @@ import com.agnither.utils.gui.components.Scale9Picture;
 
 public class FieldView extends AbstractComponent {
 
-    public function get field():Scale9Picture {
-        return _children.field_back;
+    public function get back():Scale9Picture {
+        return getChild("back") as Scale9Picture;
     }
 
     override public function set width(value: Number):void {
-        field.width = value;
+        back.width = value;
     }
     override public function get width():Number {
-        return field.width;
+        return back.width;
     }
 
     override public function set height(value: Number):void {
-        field.height = value;
+        back.height = value;
     }
     override public function get height():Number {
-        return field.height;
+        return back.height;
     }
 
     public function FieldView() {

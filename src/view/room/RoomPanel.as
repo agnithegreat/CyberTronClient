@@ -2,52 +2,48 @@
  * Created by desktop on 01.03.2015.
  */
 package view.room {
-import assets.gui.UsersPanelView;
+import assets.gui.RoomPanelView;
 
 import com.agnither.utils.gui.components.AbstractComponent;
-import com.agnither.utils.gui.components.Button;
 import com.agnither.utils.gui.components.Label;
 import com.agnither.utils.gui.components.Scale9Picture;
+
 import com.smartfoxserver.v2.entities.User;
 
 public class RoomPanel extends AbstractComponent {
 
-    public function get roomBack():Scale9Picture {
-        return _children.back;
+    public function get back():Scale9Picture {
+        return getChild("back") as Scale9Picture;
     }
 
-    public function get roomContainer():Scale9Picture {
-        return _children.container;
+    public function get container():Scale9Picture {
+        return getChild("container") as Scale9Picture;
     }
 
-    public function get roomUsersNames():AbstractComponent {
-        return _children.userNames;
+    public function get tiles():AbstractComponent {
+        return getChild("tiles");
     }
 
-    public function get roomTitle():Label {
-        return _children.room_title;
-    }
-
-    public function get quickGame():Button {
-        return _children.btn_quickGame;
+    public function get title():Label {
+        return getChild("title") as Label;
     }
 
     override public function set width(value: Number):void {
-        roomBack.width = value;
-        roomContainer.width = roomBack.width - roomContainer.x*2;
-        roomTitle.width = roomContainer.width;
-        roomTitle.x = roomContainer.x;
+        back.width = value;
+        container.width = back.width - container.x*2;
+        title.width = container.width;
+        title.x = container.x;
     }
     override public function get width():Number {
-        return roomBack.width;
+        return back.width;
     }
 
     override public function set height(value: Number):void {
-        roomBack.height = value;
-        roomContainer.height = roomBack.height - roomContainer.y*2;
+        back.height = value;
+        container.height = back.height - container.y*2;
     }
     override public function get height():Number {
-        return roomBack.height;
+        return back.height;
     }
 
     private var _tileY: int;
@@ -57,18 +53,16 @@ public class RoomPanel extends AbstractComponent {
     }
 
     override protected function initialize():void {
-        createFromFlash(UsersPanelView, "gui");
+        createFromFlash(RoomPanelView, "gui");
 
-        roomTitle.text = "Room";
+        title.text = "Room";
 
-        quickGame.visible = false;
-
-        _tileY = roomUsersNames.getChild("user2").y - roomUsersNames.getChild("user1").y;
+        _tileY = tiles.getChild("tile2").y - tiles.getChild("tile1").y;
         clearUsers();
     }
 
     public function showRoom(name: String):void {
-        roomTitle.text = name;
+        title.text = name;
     }
 
     public function showUsers(list: Array /* of User */):void {
@@ -77,15 +71,15 @@ public class RoomPanel extends AbstractComponent {
         for (var i:int = 0; i < list.length; i++) {
             var user: User = list[i];
             var tile: UserNameTile = new UserNameTile();
-            roomUsersNames.addChild(tile);
-            tile.width = roomBack.width-roomUsersNames.x*2;
+            tiles.addChild(tile);
+            tile.width = back.width-tiles.x*2;
             tile.y = i * _tileY;
-            tile.userName.text = user.name;
+            tile.label.text = user.name;
         }
     }
 
     private function clearUsers():void {
-        roomUsersNames.removeChildren(0, -1, true);
+        tiles.removeChildren(0, -1, true);
     }
 }
 }

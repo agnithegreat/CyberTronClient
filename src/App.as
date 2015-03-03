@@ -36,7 +36,7 @@ public class App extends Sprite implements IStartable {
 
     public function start():void {
         initGUI();
-        initConnection();
+//        initConnection();
     }
 
     private function initGUI():void {
@@ -44,7 +44,7 @@ public class App extends Sprite implements IStartable {
 
         _lobbyPanel = new LobbyPanel();
         addChild(_lobbyPanel);
-        _lobbyPanel.quickGame.addEventListener(Event.TRIGGERED, onPlay);
+//        _lobbyPanel.quickGame.addEventListener(Event.TRIGGERED, onPlay);
         _lobbyPanel.width = 220;
         _lobbyPanel.height = stage.stageHeight;
 
@@ -81,11 +81,11 @@ public class App extends Sprite implements IStartable {
 
         _sfs.loadConfig();
 
-        _lobbyPanel.setState(INIT);
+//        _lobbyPanel.setState(INIT);
     }
 
     private function onPlay(event: Event):void {
-        _lobbyPanel.setState(JOINED);
+//        _lobbyPanel.setState(JOINED);
         var room:Room = null;
 
         var gameRooms: Array = _sfs.getRoomListFromGroup("game");
@@ -159,7 +159,7 @@ public class App extends Sprite implements IStartable {
 
     private function onLogin(event:SFSEvent):void {
         trace(event);
-        _lobbyPanel.setState(LOGGED);
+//        _lobbyPanel.setState(LOGGED);
         _lobbyPanel.showRooms(_sfs.roomList);
     }
 
