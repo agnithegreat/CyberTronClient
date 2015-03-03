@@ -7,6 +7,7 @@ import assets.gui.RoomPanelView;
 import assets.gui.RoomScreenView;
 
 import com.agnither.utils.gui.components.AbstractComponent;
+import com.smartfoxserver.v2.entities.User;
 
 import flash.utils.Dictionary;
 
@@ -50,6 +51,10 @@ public class RoomScreen extends AbstractComponent {
 
     public function showUsers(list: Array /* of User */):void {
         room.showUsers(list);
+    }
+
+    public function updateUsers(user: User):void {
+        field.updateUser(user);
     }
 }
 }

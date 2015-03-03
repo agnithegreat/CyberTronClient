@@ -6,6 +6,9 @@ import assets.gui.FieldContainerView;
 
 import com.agnither.utils.gui.components.AbstractComponent;
 import com.agnither.utils.gui.components.Scale9Picture;
+import com.smartfoxserver.v2.entities.User;
+
+import flash.utils.Dictionary;
 
 public class FieldView extends AbstractComponent {
 
@@ -27,12 +30,27 @@ public class FieldView extends AbstractComponent {
         return back.height;
     }
 
+    private var _dict: Dictionary = new Dictionary(true);
+
+    private var _container: AbstractComponent;
+
     public function FieldView() {
         super();
     }
 
     override protected function initialize():void {
         createFromFlash(FieldContainerView, "gui");
+
+        _container = new AbstractComponent();
+        addChild(_container);
+    }
+
+    public function updateUser(user: User):void {
+        if (!_dict[user]) {
+            _dict[user] = new PersonageView(user);
+            _container.addChild(_dict[user]);
+        }
+        (_dict[user] as PersonageView).update();
     }
 }
 }

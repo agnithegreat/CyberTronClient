@@ -17,18 +17,12 @@ import com.smartfoxserver.v2.requests.RoomExtension;
 import com.smartfoxserver.v2.requests.game.CreateSFSGameRequest;
 import com.smartfoxserver.v2.requests.game.SFSGameSettings;
 
-import flash.utils.getTimer;
-
 import starling.display.Sprite;
 import starling.events.Event;
 
 import view.LobbyScreen;
-
 import view.MainMenu;
 import view.RoomScreen;
-import view.field.FieldView;
-import view.lobby.LobbyPanel;
-import view.room.RoomPanel;
 
 public class App extends Sprite implements IStartable {
 
@@ -146,15 +140,17 @@ public class App extends Sprite implements IStartable {
     }
 
     private function onUserVarsUpdate(event:SFSEvent):void {
-        var arr : Array = [];
-        var changedVars : Array = event.params.changedVars;
+//        var arr : Array = [];
+//        var changedVars : Array = event.params.changedVars;
         var user : User = event.params.user;
 
-        trace(user.name, ":");
-        for (var i : int = 0; i < changedVars.length; i++) {
-            var key : String = changedVars[i];
-            trace(key, " = ",user.getVariable(key))
-        }
+//        trace(user.name, ":");
+//        for (var i : int = 0; i < changedVars.length; i++) {
+//            var key : String = changedVars[i];
+//            trace(key, " = ",user.getVariable(key))
+//        }
+
+        _roomScreen.updateUsers(user);
     }
 
     private function onUserEnterRoom(event:SFSEvent):void {
