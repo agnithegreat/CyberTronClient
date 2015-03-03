@@ -32,7 +32,6 @@ public class RoomPanel extends AbstractComponent {
         back.width = value;
         container.width = back.width - container.x*2;
         title.width = container.width;
-        title.x = container.x;
     }
     override public function get width():Number {
         return back.width;
