@@ -19,7 +19,6 @@ import starling.display.Sprite;
 import starling.events.Event;
 
 import view.field.FieldView;
-
 import view.lobby.LobbyPanel;
 import view.room.RoomPanel;
 
