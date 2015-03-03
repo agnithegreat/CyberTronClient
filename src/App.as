@@ -10,6 +10,7 @@ import com.agnither.utils.gui.atlas.AtlasFactory;
 import com.smartfoxserver.v2.SmartFox;
 import com.smartfoxserver.v2.core.SFSEvent;
 import com.smartfoxserver.v2.entities.Room;
+import com.smartfoxserver.v2.entities.User;
 import com.smartfoxserver.v2.requests.JoinRoomRequest;
 import com.smartfoxserver.v2.requests.LoginRequest;
 import com.smartfoxserver.v2.requests.game.CreateSFSGameRequest;
@@ -143,7 +144,15 @@ public class App extends Sprite implements IStartable {
     }
 
     private function onUserVarsUpdate(event:SFSEvent):void {
+        var arr : Array = [];
+        var changedVars : Array = event.params.changedVars;
+        var user : User = event.params.user;
 
+        trace(user.name, ":");
+        for (var i : int = 0; i < changedVars.length; i++) {
+            var key : String = changedVars[i];
+            trace(key, " = ",user.getVariable(key))
+        }
     }
 
     private function onUserEnterRoom(event:SFSEvent):void {
