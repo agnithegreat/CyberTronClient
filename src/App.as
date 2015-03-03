@@ -11,11 +11,17 @@ import com.smartfoxserver.v2.SmartFox;
 import com.smartfoxserver.v2.core.SFSEvent;
 import com.smartfoxserver.v2.entities.Room;
 import com.smartfoxserver.v2.entities.User;
+import com.smartfoxserver.v2.entities.variables.UserVariable;
+import com.smartfoxserver.v2.requests.ExtensionRequest;
 import com.smartfoxserver.v2.requests.JoinRoomRequest;
 import com.smartfoxserver.v2.requests.LoginRequest;
 import com.smartfoxserver.v2.requests.RoomExtension;
 import com.smartfoxserver.v2.requests.game.CreateSFSGameRequest;
 import com.smartfoxserver.v2.requests.game.SFSGameSettings;
+
+import flash.utils.getTimer;
+
+import model.Properties;
 
 import starling.display.Sprite;
 import starling.events.Event;
@@ -35,6 +41,7 @@ public class App extends Sprite implements IStartable {
     private var _mainMenu: MainMenu;
     private var _lobbyScreen: LobbyScreen;
     private var _roomScreen: RoomScreen;
+    public static const MOVE_USER_EVT : String = "App.MOVE_USER_EVT";
 
     public function start():void {
         initGUI();
@@ -73,6 +80,14 @@ public class App extends Sprite implements IStartable {
         _sfs.addEventListener(SFSEvent.USER_VARIABLES_UPDATE, onUserVarsUpdate);
 //        _sfs.addEventListener(SFSEvent.PROXIMITY_LIST_UPDATE, onProximityListUpdate);
         _sfs.addEventListener(SFSEvent.EXTENSION_RESPONSE, onExtensionResponse);
+
+
+        addEventListener(App.MOVE_USER_EVT, onMove)
+    }
+
+    private function onMove(event : Event) : void
+    {
+        _sfs.send( new ExtensionRequest(Properties.REQ_MOVE, event.data.params, _sfs.lastJoinedRoom) );
     }
 
     private function setState(state: String):void {
@@ -140,6 +155,7 @@ public class App extends Sprite implements IStartable {
     }
 
     private function onUserVarsUpdate(event:SFSEvent):void {
+        trace("ON USER UPDATE");
 //        var arr : Array = [];
 //        var changedVars : Array = event.params.changedVars;
         var user : User = event.params.user;
