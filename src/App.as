@@ -13,6 +13,7 @@ import com.smartfoxserver.v2.entities.Room;
 import com.smartfoxserver.v2.entities.User;
 import com.smartfoxserver.v2.requests.JoinRoomRequest;
 import com.smartfoxserver.v2.requests.LoginRequest;
+import com.smartfoxserver.v2.requests.RoomExtension;
 import com.smartfoxserver.v2.requests.game.CreateSFSGameRequest;
 import com.smartfoxserver.v2.requests.game.SFSGameSettings;
 
@@ -134,6 +135,7 @@ public class App extends Sprite implements IStartable {
             settings.isPublic = true;
             settings.minPlayersToStartGame = 2;
             settings.notifyGameStarted = true;
+            settings.extension = new RoomExtension("CyberTron", "com.toxicgames.cybertron.room.GameRoomExtension");
 
             _sfs.send(new CreateSFSGameRequest(settings));
         }
