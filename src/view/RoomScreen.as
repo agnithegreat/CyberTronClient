@@ -2,8 +2,6 @@
  * Created by desktop on 03.03.2015.
  */
 package view {
-import as3reflect.Constant;
-
 import assets.gui.FieldContainerView;
 import assets.gui.RoomPanelView;
 import assets.gui.RoomScreenView;
@@ -14,7 +12,6 @@ import com.smartfoxserver.v2.entities.data.SFSObject;
 import com.smartfoxserver.v2.entities.User;
 
 import flash.ui.Keyboard;
-
 import flash.utils.Dictionary;
 
 import model.Properties;
@@ -25,7 +22,8 @@ import view.field.FieldView;
 import view.room.RoomPanel;
 
 public class RoomScreen extends AbstractComponent {
-    private var activeKeys : Array;
+
+    private var _activeKeys : Dictionary = new Dictionary(true);
 
     override protected function getManifest():Dictionary {
         var manifest: Dictionary = new Dictionary(true);
@@ -57,120 +55,26 @@ public class RoomScreen extends AbstractComponent {
 
         stage.addEventListener(KeyboardEvent.KEY_DOWN, onPress);
         stage.addEventListener(KeyboardEvent.KEY_UP, onRelease);
-
-        activeKeys = [];
-
     }
 
-    private function onRelease(event : KeyboardEvent) : void
-    {
-        var index : int = activeKeys.indexOf(event.keyCode);
-        if(index >= 0)
-        {
-            activeKeys.splice(index,1);
-        }
-//        trace("RELEASED",activeKeys);
+    private function onRelease(event: KeyboardEvent):void {
+        delete _activeKeys[event.keyCode];
         updateKeys();
     }
 
-    private function onPress(event : KeyboardEvent) : void
-    {
-        var index : int = activeKeys.indexOf(event.keyCode);
-        if(index >= 0) return;
-//        trace("press", event.keyCode);
-
-        switch (event.keyCode)
-        {
-            case Keyboard.A:
-            case Keyboard.D:
-            case Keyboard.W:
-            case Keyboard.S:
-                activeKeys.push(event.keyCode);
-                break;
-
-
-//            case Keyboard.A:
-//                index = activeKeys.indexOf(Keyboard.D);
-//                if(index >= 0)
-//                {
-//                    activeKeys.splice(index, 1)
-//                }
-//                activeKeys.push(event.keyCode);
-//                break;
-//            case Keyboard.D:
-//                index = activeKeys.indexOf(Keyboard.A);
-//                if(index >= 0)
-//                {
-//                    activeKeys.splice(index, 1)
-//                }
-//                activeKeys.push(event.keyCode);
-//                break;
-//            case Keyboard.W:
-//                index = activeKeys.indexOf(Keyboard.S);
-//                if(index >= 0)
-//                {
-//                    activeKeys.splice(index, 1)
-//                }
-//                activeKeys.push(event.keyCode);
-//                break;
-//            case Keyboard.S:
-//                index = activeKeys.indexOf(Keyboard.W);
-//                if(index >= 0)
-//                {
-//                    activeKeys.splice(index, 1)
-//                }
-//                activeKeys.push(event.keyCode);
-//                break;
-        }
-//        trace("PRESSED",activeKeys);
-
-
+    private function onPress(event: KeyboardEvent):void {
+        _activeKeys[event.keyCode] = true;
         updateKeys();
     }
 
-    private function updateKeys() : void
-    {
-        var deltaX : int = 0;
-        var deltaY : int = 0;
-        for (var i : int = 0; i < activeKeys.length; i++)
-        {
-            var key : int = activeKeys[i];
-            switch(key)
-            {
-                case Keyboard.A:
-                    deltaX += 1;
-                    break;
-                case Keyboard.D:
-                    deltaX -= 1;
-                    break;
-                case Keyboard.W:
-                    deltaY += 1;
-                    break;
-                case Keyboard.S:
-                    deltaX -= 1;
-                    break;
-            }
-        }
+    private function updateKeys():void {
+        var deltaX: int = int(_activeKeys[Keyboard.D]) - int(_activeKeys[Keyboard.A]);
+        var deltaY: int = int(_activeKeys[Keyboard.S]) - int(_activeKeys[Keyboard.W]);
 
-//        if(deltaX != 0 && deltaY != 0)
-//        {
-            var params:ISFSObject = new SFSObject();
-//            if(deltaX != 0)
-//            {
-                params.putInt(Properties.VAR_DELTAX, deltaX);
-//            }
-//            if(deltaY != 0)
-//            {
-                params.putInt(Properties.VAR_DELTAY, deltaY);
-//            }
-            dispatchEventWith(App.MOVE_USER_EVT, true, {params: params});
-
-
-
-//        }
-
-
-
+        var params:ISFSObject = new SFSObject();
+        params.putInt(Properties.VAR_DELTAX, deltaX);
+        params.putInt(Properties.VAR_DELTAY, deltaY);
+        dispatchEventWith(App.MOVE_USER_EVT, true, {params: params});
     }
 
     public function showRoom(name: String):void {
