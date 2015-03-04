@@ -154,7 +154,7 @@ public class App extends Sprite implements IStartable {
     }
 
     private function onUserVarsUpdate(event:SFSEvent):void {
-        trace("ON USER UPDATE");
+//        trace("ON USER UPDATE");
 //        var arr : Array = [];
 //        var changedVars : Array = event.params.changedVars;
         var user : User = event.params.user;
@@ -162,7 +162,7 @@ public class App extends Sprite implements IStartable {
 //        trace(user.name, ":");
 //        for (var i : int = 0; i < changedVars.length; i++) {
 //            var key : String = changedVars[i];
-//            trace(key, " = ",user.getVariable(key))
+//            trace(user.getVariable("posX"),user.getVariable("posY"));
 //        }
 
         _roomScreen.updateUsers(user);

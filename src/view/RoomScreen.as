@@ -2,6 +2,8 @@
  * Created by desktop on 03.03.2015.
  */
 package view {
+import as3reflect.Constant;
+
 import assets.gui.FieldContainerView;
 import assets.gui.RoomPanelView;
 import assets.gui.RoomScreenView;
@@ -12,6 +14,7 @@ import com.smartfoxserver.v2.entities.data.SFSObject;
 import com.smartfoxserver.v2.entities.User;
 
 import flash.ui.Keyboard;
+
 import flash.utils.Dictionary;
 
 import model.Properties;
