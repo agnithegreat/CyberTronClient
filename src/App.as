@@ -85,10 +85,6 @@ public class App extends Sprite implements IStartable {
         addEventListener(App.MOVE_USER_EVT, onMove)
     }
 
-    private function onMove(event: Event):void {
-        _sfs.send( new ExtensionRequest(Properties.REQ_MOVE, event.data.params, _sfs.lastJoinedRoom) );
-    }
-
     private function setState(state: String):void {
         switch (state) {
             case INIT:
@@ -149,22 +145,16 @@ public class App extends Sprite implements IStartable {
         }
     }
 
+    private function onMove(event: Event):void {
+        _sfs.send( new ExtensionRequest(Properties.REQ_MOVE, event.data.params, _sfs.lastJoinedRoom) );
+    }
+
     private function onExtensionResponse(event:SFSEvent):void {
 
     }
 
     private function onUserVarsUpdate(event:SFSEvent):void {
-//        trace("ON USER UPDATE");
-//        var arr : Array = [];
-//        var changedVars : Array = event.params.changedVars;
         var user : User = event.params.user;
-
-//        trace(user.name, ":");
-//        for (var i : int = 0; i < changedVars.length; i++) {
-//            var key : String = changedVars[i];
-//            trace(user.getVariable("posX"),user.getVariable("posY"));
-//        }
-
         _roomScreen.updateUsers(user);
     }
 
