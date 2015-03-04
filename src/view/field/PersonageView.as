@@ -9,6 +9,8 @@ import com.agnither.utils.gui.components.Label;
 import com.agnither.utils.gui.components.Picture;
 import com.smartfoxserver.v2.entities.User;
 
+import model.Properties;
+
 public class PersonageView extends AbstractComponent {
 
     public function get label():Label {
@@ -31,13 +33,13 @@ public class PersonageView extends AbstractComponent {
         createFromFlash(PersonagePlaceView, "gui");
 
         label.text = _user.name;
-        label.color = _user.getVariable("color").getIntValue();
-        dot.color = _user.getVariable("color").getIntValue();
+        label.color = _user.getVariable(Properties.VAR_COLOR).getIntValue();
+        dot.color = _user.getVariable(Properties.VAR_COLOR).getIntValue();
     }
 
     public function update():void {
-        x = _user.getVariable("posX").getIntValue() * 2;
-        y = _user.getVariable("posY").getIntValue() * 2;
+        x = _user.getVariable(Properties.VAR_POSX).getIntValue() * 2;
+        y = _user.getVariable(Properties.VAR_POSY).getIntValue() * 2;
     }
 }
 }

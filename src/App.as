@@ -36,12 +36,13 @@ public class App extends Sprite implements IStartable {
     public static const LOGGED: String = "logged";
     public static const JOINED: String = "joined";
 
+    public static const MOVE_USER_EVT : String = "App.MOVE_USER_EVT";
+
     private var _sfs:SmartFox;
 
     private var _mainMenu: MainMenu;
     private var _lobbyScreen: LobbyScreen;
     private var _roomScreen: RoomScreen;
-    public static const MOVE_USER_EVT : String = "App.MOVE_USER_EVT";
 
     public function start():void {
         initGUI();
@@ -81,12 +82,10 @@ public class App extends Sprite implements IStartable {
 //        _sfs.addEventListener(SFSEvent.PROXIMITY_LIST_UPDATE, onProximityListUpdate);
         _sfs.addEventListener(SFSEvent.EXTENSION_RESPONSE, onExtensionResponse);
 
-
         addEventListener(App.MOVE_USER_EVT, onMove)
     }
 
-    private function onMove(event : Event) : void
-    {
+    private function onMove(event: Event):void {
         _sfs.send( new ExtensionRequest(Properties.REQ_MOVE, event.data.params, _sfs.lastJoinedRoom) );
     }
 
