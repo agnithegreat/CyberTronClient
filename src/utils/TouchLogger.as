@@ -14,8 +14,13 @@ public class TouchLogger {
     private static var _stage: Stage;
 
     private static var _touch: Point;
-    public static function getTouch():Point {
+    public static function get touch():Point {
         return _touch;
+    }
+
+    private static var _touching: Boolean;
+    public static function get isTouching():Boolean {
+        return _touching;
     }
 
     public static function init(stage: Stage):void {
@@ -34,6 +39,12 @@ public class TouchLogger {
                     var pos: Point = touch.getLocation(_stage);
                     _touch.x = pos.x;
                     _touch.y = pos.y;
+                    break;
+                case TouchPhase.BEGAN:
+                    _touching = true;
+                    break;
+                case TouchPhase.ENDED:
+                    _touching = false;
                     break;
             }
         }

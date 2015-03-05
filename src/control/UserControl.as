@@ -59,8 +59,8 @@ public class UserControl extends EventDispatcher implements IAnimatable {
         }
 
         var place: Point = _user.localToGlobal(local);
-        var dx: Number = TouchLogger.getTouch().x - place.x;
-        var dy: Number = TouchLogger.getTouch().y - place.y;
+        var dx: Number = TouchLogger.touch.x - place.x;
+        var dy: Number = TouchLogger.touch.y - place.y;
         var direction: Number = Math.atan2(dy, dx);
 
         if (_direction != direction) {
@@ -69,6 +69,12 @@ public class UserControl extends EventDispatcher implements IAnimatable {
             params = new SFSObject();
             params.putFloat(Properties.VAR_DIRECTION, _direction);
             dispatchEventWith(App.ROTATE_USER_EVT, true, params);
+        }
+
+        if (TouchLogger.isTouching) {
+            params = new SFSObject();
+            params.putFloat(Properties.VAR_DIRECTION, _direction);
+            dispatchEventWith(App.SHOT_USER_EVT, true, params);
         }
     }
 }

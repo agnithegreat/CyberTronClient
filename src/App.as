@@ -11,7 +11,9 @@ import com.smartfoxserver.v2.SmartFox;
 import com.smartfoxserver.v2.core.SFSEvent;
 import com.smartfoxserver.v2.entities.Room;
 import com.smartfoxserver.v2.entities.User;
+import com.smartfoxserver.v2.entities.data.ISFSArray;
 import com.smartfoxserver.v2.entities.data.ISFSObject;
+import com.smartfoxserver.v2.entities.data.SFSArray;
 import com.smartfoxserver.v2.entities.data.SFSObject;
 import com.smartfoxserver.v2.entities.variables.UserVariable;
 import com.smartfoxserver.v2.requests.ExtensionRequest;
@@ -51,6 +53,7 @@ public class App extends Sprite implements IStartable {
 
     public static const MOVE_USER_EVT : String = "App.MOVE_USER_EVT";
     public static const ROTATE_USER_EVT : String = "App.ROTATE_USER_EVT";
+    public static const SHOT_USER_EVT : String = "App.SHOT_USER_EVT";
 
     private var _sfs:SmartFox;
 
@@ -98,6 +101,7 @@ public class App extends Sprite implements IStartable {
         _sfs.addEventListener(SFSEvent.USER_ENTER_ROOM, onUserEnterRoom);
         _sfs.addEventListener(SFSEvent.USER_EXIT_ROOM, onUserExitRoom);
         _sfs.addEventListener(SFSEvent.USER_VARIABLES_UPDATE, onUserVarsUpdate);
+        _sfs.addEventListener(SFSEvent.ROOM_VARIABLES_UPDATE, onRoomVarsUpdate);
 //        _sfs.addEventListener(SFSEvent.PROXIMITY_LIST_UPDATE, onProximityListUpdate);
         _sfs.addEventListener(SFSEvent.EXTENSION_RESPONSE, onExtensionResponse);
     }
@@ -109,6 +113,7 @@ public class App extends Sprite implements IStartable {
         _userControl = new UserControl();
         _userControl.addEventListener(App.MOVE_USER_EVT, onMove);
         _userControl.addEventListener(App.ROTATE_USER_EVT, onRotate);
+        _userControl.addEventListener(App.SHOT_USER_EVT, onShot);
 
         _cursor = new AimView();
         addChild(_cursor);
@@ -187,6 +192,10 @@ public class App extends Sprite implements IStartable {
         _sfs.send(new ExtensionRequest(Properties.REQ_ROTATE, event.data as SFSObject, _sfs.lastJoinedRoom));
     }
 
+    private function onShot(event: Event):void {
+        _sfs.send(new ExtensionRequest(Properties.REQ_SHOT, event.data as SFSObject, _sfs.lastJoinedRoom));
+    }
+
     private function onExtensionResponse(event:SFSEvent):void {
 
     }
@@ -197,6 +206,21 @@ public class App extends Sprite implements IStartable {
 
         if (_roomScreen.field.localPersonage) {
             _userControl.init(_roomScreen.field.localPersonage.dot);
+        }
+    }
+
+    private function onRoomVarsUpdate(event:SFSEvent):void {
+        var room: Room = event.params.room;
+        var bullets: ISFSArray = room.getVariable("bullets").getSFSArrayValue();
+        for (var i : int = 0; i < bullets.size(); i++) {
+            var bullet: SFSObject = bullets.getElementAt(i) as SFSObject;
+
+            var id: int = bullet.getInt(Properties.VAR_ID);
+            var posX: int = bullet.getInt(Properties.VAR_POSX);
+            var posY: int = bullet.getInt(Properties.VAR_POSY);
+            var direction: Number = bullet.getFloat(Properties.VAR_DIRECTION);
+            var speed: Number = bullet.getFloat(Properties.VAR_SPEED);
+            trace(id, posX, posY, direction, speed);
         }
     }
 

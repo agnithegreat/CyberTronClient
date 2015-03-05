@@ -27,8 +27,8 @@ public class AimView extends AbstractComponent implements IAnimatable{
     }
 
     public function advanceTime(time:Number):void {
-        x = TouchLogger.getTouch().x - parent.localToGlobal(local).x;
-        y = TouchLogger.getTouch().y - parent.localToGlobal(local).y;
+        x = TouchLogger.touch.x - parent.localToGlobal(local).x;
+        y = TouchLogger.touch.y - parent.localToGlobal(local).y;
     }
 }
 }
