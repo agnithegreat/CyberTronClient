@@ -56,6 +56,15 @@ public class FieldView extends AbstractComponent {
         addChild(_container);
     }
 
+    public function showUsers(list: Array /* of User */):void {
+        for (var user: User in _personages) {
+            if (list.indexOf(user) < 0) {
+                _personages[user].destroy();
+                delete _personages[user];
+            }
+        }
+    }
+
     public function updateUser(user: User):void {
         if (!_personages[user]) {
             _personages[user] = new PersonageView(user);

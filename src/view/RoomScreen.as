@@ -52,6 +52,7 @@ public class RoomScreen extends AbstractComponent {
 
     public function showUsers(list: Array /* of User */):void {
         room.showUsers(list);
+        field.showUsers(list);
     }
 
     public function updateUser(user: User):void {

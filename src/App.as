@@ -15,6 +15,7 @@ import com.smartfoxserver.v2.entities.data.ISFSArray;
 import com.smartfoxserver.v2.entities.data.ISFSObject;
 import com.smartfoxserver.v2.entities.data.SFSArray;
 import com.smartfoxserver.v2.entities.data.SFSObject;
+import com.smartfoxserver.v2.entities.variables.RoomVariable;
 import com.smartfoxserver.v2.entities.variables.UserVariable;
 import com.smartfoxserver.v2.requests.ExtensionRequest;
 import com.smartfoxserver.v2.requests.JoinRoomRequest;
@@ -211,14 +212,19 @@ public class App extends Sprite implements IStartable {
 
     private function onRoomVarsUpdate(event:SFSEvent):void {
         var room: Room = event.params.room;
-        var bullets: ISFSArray = room.getVariable("bullets").getSFSArrayValue();
-        for (var i : int = 0; i < bullets.size(); i++) {
-            var bullet: SFSObject = bullets.getElementAt(i) as SFSObject;
+        if (room) {
+            var param:RoomVariable = room.getVariable("bullets");
+            if (param) {
+                var bullets:ISFSArray = param.getSFSArrayValue();
+                for (var i:int = 0; i < bullets.size(); i++) {
+                    var bullet:SFSObject = bullets.getElementAt(i) as SFSObject;
 
-            var user: User = room.getUserById(bullet.getInt(Properties.VAR_USER));
-            _roomScreen.updateBullet(bullet, user);
+                    var user:User = room.getUserById(bullet.getInt(Properties.VAR_USER));
+                    _roomScreen.updateBullet(bullet, user);
+                }
+                _roomScreen.cleanBullets();
+            }
         }
-        _roomScreen.cleanBullets();
     }
 
     private function onUserEnterRoom(event:SFSEvent):void {
