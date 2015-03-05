@@ -38,8 +38,12 @@ public class PersonageView extends AbstractComponent {
     }
 
     public function update():void {
-        x = _user.getVariable(Properties.VAR_POSX).getIntValue() * 2;
-        y = _user.getVariable(Properties.VAR_POSY).getIntValue() * 2;
+        x = _user.getVariable(Properties.VAR_POSX).getIntValue();
+        y = _user.getVariable(Properties.VAR_POSY).getIntValue();
+
+        if (_user.getVariable(Properties.VAR_DIRECTION)) {
+            dot.rotation = _user.getVariable(Properties.VAR_DIRECTION).getDoubleValue();
+        }
     }
 }
 }

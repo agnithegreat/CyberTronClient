@@ -32,6 +32,11 @@ public class FieldView extends AbstractComponent {
 
     private var _dict: Dictionary = new Dictionary(true);
 
+    private var _localPersonage: PersonageView;
+    public function get localPersonage():PersonageView {
+        return _localPersonage;
+    }
+
     private var _container: AbstractComponent;
 
     public function FieldView() {
@@ -49,6 +54,10 @@ public class FieldView extends AbstractComponent {
         if (!_dict[user]) {
             _dict[user] = new PersonageView(user);
             _container.addChild(_dict[user]);
+
+            if (user.isItMe) {
+                _localPersonage = _dict[user];
+            }
         }
         (_dict[user] as PersonageView).update();
     }

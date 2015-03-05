@@ -11,6 +11,10 @@ public class Properties
     public static const VAR_POSX : String = "posX";
     public static const VAR_POSY : String = "posY";
     public static const VAR_COLOR : String = "color";
+
+    public static const REQ_ROTATE : String = "control.rotate";
+    public static const VAR_DIRECTION : String = "direction";
+
     public static const VAR_DELTAX : String = "deltaX";
     public static const VAR_DELTAY : String = "deltaY";
 }

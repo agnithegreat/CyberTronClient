@@ -1,0 +1,34 @@
+/**
+ * Created by kirillvirich on 05.03.15.
+ */
+package view.field {
+import assets.gui.AimPlaceView;
+
+import com.agnither.utils.gui.components.AbstractComponent;
+
+import flash.geom.Point;
+
+import starling.animation.IAnimatable;
+
+import utils.TouchLogger;
+
+public class AimView extends AbstractComponent implements IAnimatable{
+
+    private static const local: Point = new Point();
+
+    public function AimView() {
+        super();
+    }
+
+    override protected function initialize():void {
+        createFromFlash(AimPlaceView, "gui");
+
+        touchable = false;
+    }
+
+    public function advanceTime(time:Number):void {
+        x = TouchLogger.getTouch().x - parent.localToGlobal(local).x;
+        y = TouchLogger.getTouch().y - parent.localToGlobal(local).y;
+    }
+}
+}

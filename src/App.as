@@ -11,6 +11,8 @@ import com.smartfoxserver.v2.SmartFox;
 import com.smartfoxserver.v2.core.SFSEvent;
 import com.smartfoxserver.v2.entities.Room;
 import com.smartfoxserver.v2.entities.User;
+import com.smartfoxserver.v2.entities.data.ISFSObject;
+import com.smartfoxserver.v2.entities.data.SFSObject;
 import com.smartfoxserver.v2.entities.variables.UserVariable;
 import com.smartfoxserver.v2.requests.ExtensionRequest;
 import com.smartfoxserver.v2.requests.JoinRoomRequest;
@@ -19,16 +21,27 @@ import com.smartfoxserver.v2.requests.RoomExtension;
 import com.smartfoxserver.v2.requests.game.CreateSFSGameRequest;
 import com.smartfoxserver.v2.requests.game.SFSGameSettings;
 
+import control.UserControl;
+
+import flash.ui.Keyboard;
+import flash.ui.Mouse;
+
 import flash.utils.getTimer;
 
 import model.Properties;
 
+import starling.core.Starling;
+
 import starling.display.Sprite;
 import starling.events.Event;
+
+import utils.KeyLogger;
+import utils.TouchLogger;
 
 import view.LobbyScreen;
 import view.MainMenu;
 import view.RoomScreen;
+import view.field.AimView;
 
 public class App extends Sprite implements IStartable {
 
@@ -37,16 +50,22 @@ public class App extends Sprite implements IStartable {
     public static const JOINED: String = "joined";
 
     public static const MOVE_USER_EVT : String = "App.MOVE_USER_EVT";
+    public static const ROTATE_USER_EVT : String = "App.ROTATE_USER_EVT";
 
     private var _sfs:SmartFox;
+
+    private var _userControl: UserControl;
 
     private var _mainMenu: MainMenu;
     private var _lobbyScreen: LobbyScreen;
     private var _roomScreen: RoomScreen;
 
+    private var _cursor: AimView
+
     public function start():void {
         initGUI();
         initConnection();
+        initControl();
         setState(INIT);
     }
 
@@ -81,8 +100,20 @@ public class App extends Sprite implements IStartable {
         _sfs.addEventListener(SFSEvent.USER_VARIABLES_UPDATE, onUserVarsUpdate);
 //        _sfs.addEventListener(SFSEvent.PROXIMITY_LIST_UPDATE, onProximityListUpdate);
         _sfs.addEventListener(SFSEvent.EXTENSION_RESPONSE, onExtensionResponse);
+    }
 
-        addEventListener(App.MOVE_USER_EVT, onMove)
+    private function initControl():void {
+        KeyLogger.init(stage);
+        TouchLogger.init(stage);
+
+        _userControl = new UserControl();
+        _userControl.addEventListener(App.MOVE_USER_EVT, onMove);
+        _userControl.addEventListener(App.ROTATE_USER_EVT, onRotate);
+
+        _cursor = new AimView();
+        addChild(_cursor);
+        Starling.juggler.add(_cursor);
+        Mouse.hide();
     }
 
     private function setState(state: String):void {
@@ -91,24 +122,28 @@ public class App extends Sprite implements IStartable {
                 _mainMenu.visible = true;
                 _lobbyScreen.visible = false;
                 _roomScreen.visible = false;
+
+                Starling.juggler.remove(_userControl);
                 break;
             case LOGGED:
                 _mainMenu.visible = false;
                 _lobbyScreen.visible = true;
                 _roomScreen.visible = false;
+
+                Starling.juggler.remove(_userControl);
                 break;
             case JOINED:
                 _mainMenu.visible = false;
                 _lobbyScreen.visible = false;
                 _roomScreen.visible = true;
+
+                Starling.juggler.add(_userControl);
                 break;
         }
     }
 
     private function onConnect(event:Event):void {
         _sfs.loadConfig();
-
-        setState(LOGGED);
     }
 
     private function onQuickGame(event: Event):void {
@@ -117,7 +152,6 @@ public class App extends Sprite implements IStartable {
         var gameRooms: Array = _sfs.getRoomListFromGroup("game");
         for (var i:int = 0; i < gameRooms.length; i++) {
             var roomItem:Room = gameRooms[i] as Room;
-            trace(roomItem.name, roomItem.id, roomItem.capacity, roomItem.isGame);
             if (roomItem.userCount < roomItem.maxUsers) {
                 room = roomItem;
                 break;
@@ -146,7 +180,11 @@ public class App extends Sprite implements IStartable {
     }
 
     private function onMove(event: Event):void {
-        _sfs.send( new ExtensionRequest(Properties.REQ_MOVE, event.data.params, _sfs.lastJoinedRoom) );
+        _sfs.send(new ExtensionRequest(Properties.REQ_MOVE, event.data as SFSObject, _sfs.lastJoinedRoom));
+    }
+
+    private function onRotate(event: Event):void {
+        _sfs.send(new ExtensionRequest(Properties.REQ_ROTATE, event.data as SFSObject, _sfs.lastJoinedRoom));
     }
 
     private function onExtensionResponse(event:SFSEvent):void {
@@ -155,7 +193,11 @@ public class App extends Sprite implements IStartable {
 
     private function onUserVarsUpdate(event:SFSEvent):void {
         var user : User = event.params.user;
-        _roomScreen.updateUsers(user);
+        _roomScreen.updateUser(user);
+
+        if (_roomScreen.field.localPersonage) {
+            _userControl.init(_roomScreen.field.localPersonage.dot);
+        }
     }
 
     private function onUserEnterRoom(event:SFSEvent):void {
@@ -174,7 +216,6 @@ public class App extends Sprite implements IStartable {
 
     private function onRoomJoin(event:SFSEvent):void {
         var room:Room = event.params.room;
-        trace(room.name, room.id, room.userList);
 
         setState(JOINED);
 
@@ -192,6 +233,7 @@ public class App extends Sprite implements IStartable {
     }
 
     private function onLogin(event:SFSEvent):void {
+        setState(LOGGED);
         trace(event);
         _lobbyScreen.showRooms(_sfs.roomList);
     }
