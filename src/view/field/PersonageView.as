@@ -23,6 +23,11 @@ public class PersonageView extends AbstractComponent {
 
     private var _user: User;
 
+    private var _color: int;
+    public function get color():int {
+        return _color;
+    }
+
     public function PersonageView(user: User) {
         _user = user;
 
@@ -32,9 +37,11 @@ public class PersonageView extends AbstractComponent {
     override protected function initialize():void {
         createFromFlash(PersonagePlaceView, "gui");
 
+        _color = _user.getVariable(Properties.VAR_COLOR).getIntValue();
+
         label.text = _user.name;
-        label.color = _user.getVariable(Properties.VAR_COLOR).getIntValue();
-        dot.color = _user.getVariable(Properties.VAR_COLOR).getIntValue();
+        label.color = _color;
+        dot.color = _color;
     }
 
     public function update():void {

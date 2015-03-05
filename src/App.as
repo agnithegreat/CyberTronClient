@@ -63,7 +63,7 @@ public class App extends Sprite implements IStartable {
     private var _lobbyScreen: LobbyScreen;
     private var _roomScreen: RoomScreen;
 
-    private var _cursor: AimView
+    private var _cursor: AimView;
 
     public function start():void {
         initGUI();
@@ -215,13 +215,10 @@ public class App extends Sprite implements IStartable {
         for (var i : int = 0; i < bullets.size(); i++) {
             var bullet: SFSObject = bullets.getElementAt(i) as SFSObject;
 
-            var id: int = bullet.getInt(Properties.VAR_ID);
-            var posX: int = bullet.getInt(Properties.VAR_POSX);
-            var posY: int = bullet.getInt(Properties.VAR_POSY);
-            var direction: Number = bullet.getFloat(Properties.VAR_DIRECTION);
-            var speed: Number = bullet.getFloat(Properties.VAR_SPEED);
-            trace(id, posX, posY, direction, speed);
+            var user: User = room.getUserById(bullet.getInt(Properties.VAR_USER));
+            _roomScreen.updateBullet(bullet, user);
         }
+        _roomScreen.cleanBullets();
     }
 
     private function onUserEnterRoom(event:SFSEvent):void {

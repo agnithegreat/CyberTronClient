@@ -17,6 +17,7 @@ public class Properties
 
     public static const REQ_SHOT : String = "control.shot";
     public static const VAR_ID : String = "id";
+    public static const VAR_USER : String = "user";
     public static const VAR_SPEED : String = "speed";
 
     public static const VAR_DELTAX : String = "deltaX";

@@ -28,6 +28,8 @@ public class UserControl extends EventDispatcher implements IAnimatable {
 
     private var _direction: Number;
 
+    private var _shotCooldown: Number = 0;
+
     public function UserControl() {
     }
 
@@ -54,6 +56,7 @@ public class UserControl extends EventDispatcher implements IAnimatable {
             dispatchEventWith(App.MOVE_USER_EVT, true, params);
         }
 
+
         if (!_user) {
             return;
         }
@@ -71,7 +74,12 @@ public class UserControl extends EventDispatcher implements IAnimatable {
             dispatchEventWith(App.ROTATE_USER_EVT, true, params);
         }
 
-        if (TouchLogger.isTouching) {
+
+        _shotCooldown -= time;
+
+        if (_shotCooldown <= 0 && TouchLogger.isTouching) {
+            _shotCooldown = 0.3;
+
             params = new SFSObject();
             params.putFloat(Properties.VAR_DIRECTION, _direction);
             dispatchEventWith(App.SHOT_USER_EVT, true, params);

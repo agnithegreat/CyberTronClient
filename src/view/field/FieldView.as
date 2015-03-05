@@ -7,8 +7,11 @@ import assets.gui.FieldContainerView;
 import com.agnither.utils.gui.components.AbstractComponent;
 import com.agnither.utils.gui.components.Scale9Picture;
 import com.smartfoxserver.v2.entities.User;
+import com.smartfoxserver.v2.entities.data.SFSObject;
 
 import flash.utils.Dictionary;
+
+import model.Properties;
 
 public class FieldView extends AbstractComponent {
 
@@ -30,7 +33,8 @@ public class FieldView extends AbstractComponent {
         return back.height;
     }
 
-    private var _dict: Dictionary = new Dictionary(true);
+    private var _personages: Dictionary = new Dictionary(true);
+    private var _bullets: Dictionary = new Dictionary(true);
 
     private var _localPersonage: PersonageView;
     public function get localPersonage():PersonageView {
@@ -38,6 +42,8 @@ public class FieldView extends AbstractComponent {
     }
 
     private var _container: AbstractComponent;
+
+    private var _bulletCleans: int = 0;
 
     public function FieldView() {
         super();
@@ -51,15 +57,36 @@ public class FieldView extends AbstractComponent {
     }
 
     public function updateUser(user: User):void {
-        if (!_dict[user]) {
-            _dict[user] = new PersonageView(user);
-            _container.addChild(_dict[user]);
+        if (!_personages[user]) {
+            _personages[user] = new PersonageView(user);
+            _container.addChild(_personages[user]);
 
             if (user.isItMe) {
-                _localPersonage = _dict[user];
+                _localPersonage = _personages[user];
             }
         }
-        (_dict[user] as PersonageView).update();
+        (_personages[user] as PersonageView).update();
+    }
+
+    public function updateBullet(bullet: SFSObject, user: User):void {
+        var id: int = bullet.getInt(Properties.VAR_ID);
+
+        if (!_bullets[id]) {
+            _bullets[id] = new BulletView();
+            _container.addChild(_bullets[id]);
+            _bullets[id].bullet.color = _personages[user].color;
+        }
+        (_bullets[id] as BulletView).update(bullet, _bulletCleans);
+    }
+
+    public function cleanBullets():void {
+        for (var key: int in _bullets) {
+            if (_bullets[key].cleanId < _bulletCleans) {
+                _bullets[key].destroy();
+                delete _bullets[key];
+            }
+        }
+        _bulletCleans++;
     }
 }
 }

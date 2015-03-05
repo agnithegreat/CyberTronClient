@@ -8,6 +8,7 @@ import assets.gui.RoomScreenView;
 
 import com.agnither.utils.gui.components.AbstractComponent;
 import com.smartfoxserver.v2.entities.User;
+import com.smartfoxserver.v2.entities.data.SFSObject;
 
 import flash.utils.Dictionary;
 
@@ -55,6 +56,14 @@ public class RoomScreen extends AbstractComponent {
 
     public function updateUser(user: User):void {
         field.updateUser(user);
+    }
+
+    public function updateBullet(bullet: SFSObject, user: User):void {
+        field.updateBullet(bullet, user);
+    }
+
+    public function cleanBullets():void {
+        field.cleanBullets();
     }
 }
 }
