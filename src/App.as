@@ -13,10 +13,8 @@ import com.smartfoxserver.v2.entities.Room;
 import com.smartfoxserver.v2.entities.User;
 import com.smartfoxserver.v2.entities.data.ISFSArray;
 import com.smartfoxserver.v2.entities.data.ISFSObject;
-import com.smartfoxserver.v2.entities.data.SFSArray;
 import com.smartfoxserver.v2.entities.data.SFSObject;
 import com.smartfoxserver.v2.entities.variables.RoomVariable;
-import com.smartfoxserver.v2.entities.variables.UserVariable;
 import com.smartfoxserver.v2.requests.ExtensionRequest;
 import com.smartfoxserver.v2.requests.JoinRoomRequest;
 import com.smartfoxserver.v2.requests.LoginRequest;
@@ -26,15 +24,12 @@ import com.smartfoxserver.v2.requests.game.SFSGameSettings;
 
 import control.UserControl;
 
-import flash.ui.Keyboard;
 import flash.ui.Mouse;
 
-import flash.utils.getTimer;
-
-import model.Properties;
+import model.BulletProps;
+import model.RequestProps;
 
 import starling.core.Starling;
-
 import starling.display.Sprite;
 import starling.events.Event;
 
@@ -186,15 +181,15 @@ public class App extends Sprite implements IStartable {
     }
 
     private function onMove(event: Event):void {
-        _sfs.send(new ExtensionRequest(Properties.REQ_MOVE, event.data as SFSObject, _sfs.lastJoinedRoom));
+        _sfs.send(new ExtensionRequest(RequestProps.REQ_MOVE, event.data as SFSObject, _sfs.lastJoinedRoom));
     }
 
     private function onRotate(event: Event):void {
-        _sfs.send(new ExtensionRequest(Properties.REQ_ROTATE, event.data as SFSObject, _sfs.lastJoinedRoom));
+        _sfs.send(new ExtensionRequest(RequestProps.REQ_ROTATE, event.data as SFSObject, _sfs.lastJoinedRoom));
     }
 
     private function onShot(event: Event):void {
-        _sfs.send(new ExtensionRequest(Properties.REQ_SHOT, event.data as SFSObject, _sfs.lastJoinedRoom));
+        _sfs.send(new ExtensionRequest(RequestProps.REQ_SHOT, event.data as SFSObject, _sfs.lastJoinedRoom));
     }
 
     private function onExtensionResponse(event:SFSEvent):void {
@@ -213,13 +208,18 @@ public class App extends Sprite implements IStartable {
     private function onRoomVarsUpdate(event:SFSEvent):void {
         var room: Room = event.params.room;
         if (room) {
-            var param:RoomVariable = room.getVariable("bullets");
-            if (param) {
-                var bullets:ISFSArray = param.getSFSArrayValue();
+            var dataParam: RoomVariable = room.getVariable("data");
+            if (dataParam) {
+                var data:ISFSObject = dataParam.getSFSObjectValue();
+            }
+
+            var bulletsParam: RoomVariable = room.getVariable("bullets");
+            if (bulletsParam) {
+                var bullets:ISFSArray = bulletsParam.getSFSArrayValue();
                 for (var i:int = 0; i < bullets.size(); i++) {
                     var bullet:SFSObject = bullets.getElementAt(i) as SFSObject;
 
-                    var user:User = room.getUserById(bullet.getInt(Properties.VAR_USER));
+                    var user:User = room.getUserById(bullet.getInt(BulletProps.USER));
                     _roomScreen.updateBullet(bullet, user);
                 }
                 _roomScreen.cleanBullets();

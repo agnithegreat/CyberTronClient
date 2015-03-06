@@ -8,7 +8,9 @@ import com.agnither.utils.gui.components.AbstractComponent;
 import com.agnither.utils.gui.components.Picture;
 import com.smartfoxserver.v2.entities.data.SFSObject;
 
-import model.Properties;
+import model.BulletProps;
+
+import model.RequestProps;
 
 import utils.TouchLogger;
 
@@ -34,9 +36,9 @@ public class BulletView extends AbstractComponent {
     }
 
     public function update(data: SFSObject, cleanId: int):void {
-        x = data.getInt(Properties.VAR_POSX);
-        y = data.getInt(Properties.VAR_POSY);
-        rotation = data.getFloat(Properties.VAR_DIRECTION);
+        x = data.getInt(BulletProps.POSX);
+        y = data.getInt(BulletProps.POSY);
+        rotation = data.getFloat(BulletProps.DIRECTION);
 
         _cleanId = cleanId;
     }

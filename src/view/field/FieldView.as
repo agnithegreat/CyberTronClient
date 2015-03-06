@@ -11,7 +11,9 @@ import com.smartfoxserver.v2.entities.data.SFSObject;
 
 import flash.utils.Dictionary;
 
-import model.Properties;
+import model.BulletProps;
+
+import model.RequestProps;
 
 public class FieldView extends AbstractComponent {
 
@@ -78,7 +80,7 @@ public class FieldView extends AbstractComponent {
     }
 
     public function updateBullet(bullet: SFSObject, user: User):void {
-        var id: int = bullet.getInt(Properties.VAR_ID);
+        var id: int = bullet.getInt(BulletProps.ID);
 
         if (!_bullets[id]) {
             _bullets[id] = new BulletView();

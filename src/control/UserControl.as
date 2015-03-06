@@ -8,7 +8,9 @@ import com.smartfoxserver.v2.entities.data.SFSObject;
 import flash.geom.Point;
 import flash.ui.Keyboard;
 
-import model.Properties;
+import model.PersonageProps;
+
+import model.RequestProps;
 
 import starling.animation.IAnimatable;
 import starling.display.DisplayObject;
@@ -51,8 +53,8 @@ public class UserControl extends EventDispatcher implements IAnimatable {
             _deltaY = deltaY;
 
             var params:ISFSObject = new SFSObject();
-            params.putInt(Properties.VAR_DELTAX, _deltaX * 80);
-            params.putInt(Properties.VAR_DELTAY, _deltaY * 80);
+            params.putInt(PersonageProps.DELTAX, _deltaX);
+            params.putInt(PersonageProps.DELTAY, _deltaY);
             dispatchEventWith(App.MOVE_USER_EVT, true, params);
         }
 
@@ -70,7 +72,7 @@ public class UserControl extends EventDispatcher implements IAnimatable {
             _direction = direction;
 
             params = new SFSObject();
-            params.putFloat(Properties.VAR_DIRECTION, _direction);
+            params.putFloat(PersonageProps.DIRECTION, _direction);
             dispatchEventWith(App.ROTATE_USER_EVT, true, params);
         }
 
@@ -78,10 +80,11 @@ public class UserControl extends EventDispatcher implements IAnimatable {
         _shotCooldown -= time;
 
         if (_shotCooldown <= 0 && TouchLogger.isTouching) {
+            // TODO: use it from config
             _shotCooldown = 0.3;
 
             params = new SFSObject();
-            params.putFloat(Properties.VAR_DIRECTION, _direction);
+            params.putFloat(PersonageProps.DIRECTION, _direction);
             dispatchEventWith(App.SHOT_USER_EVT, true, params);
         }
     }
