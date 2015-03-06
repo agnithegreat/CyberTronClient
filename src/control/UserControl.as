@@ -8,8 +8,6 @@ import com.smartfoxserver.v2.entities.data.SFSObject;
 import flash.geom.Point;
 import flash.ui.Keyboard;
 
-import model.GlobalProps;
-
 import model.PersonageProps;
 
 import starling.animation.IAnimatable;
@@ -30,7 +28,7 @@ public class UserControl extends EventDispatcher implements IAnimatable {
 
     private var _direction: Number;
 
-    private var _shotCooldown: Number = 0;
+    private var _isShooting: Boolean;
 
     public function UserControl() {
     }
@@ -76,15 +74,11 @@ public class UserControl extends EventDispatcher implements IAnimatable {
             dispatchEventWith(App.ROTATE_USER_EVT, true, params);
         }
 
-
-        _shotCooldown -= time;
-
-        if (_shotCooldown <= 0 && TouchLogger.isTouching) {
-            // TODO: use weapon from personage
-            _shotCooldown = GlobalProps.getWeapon("gun").cooldown;
+        if (_isShooting != TouchLogger.isTouching) {
+            _isShooting = TouchLogger.isTouching;
 
             params = new SFSObject();
-            params.putFloat(PersonageProps.DIRECTION, _direction);
+            params.putBool(PersonageProps.SHOOT, _isShooting);
             dispatchEventWith(App.SHOT_USER_EVT, true, params);
         }
     }

@@ -11,6 +11,7 @@ public class PersonageProps {
     public static const DELTAX: String = "deltaX";
     public static const DELTAY: String = "deltaY";
     public static const DIRECTION: String = "direction";
+    public static const SHOOT: String = "shoot";
     public static const SPEED: String = "speed";
 }
 }
