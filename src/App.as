@@ -27,6 +27,7 @@ import control.UserControl;
 import flash.ui.Mouse;
 
 import model.BulletProps;
+import model.GlobalProps;
 import model.RequestProps;
 
 import starling.core.Starling;
@@ -210,12 +211,12 @@ public class App extends Sprite implements IStartable {
         if (room) {
             var dataParam: RoomVariable = room.getVariable("data");
             if (dataParam) {
-                var data:ISFSObject = dataParam.getSFSObjectValue();
+                GlobalProps.PROPERTIES = dataParam.getSFSObjectValue().toObject();
             }
 
             var bulletsParam: RoomVariable = room.getVariable("bullets");
             if (bulletsParam) {
-                var bullets:ISFSArray = bulletsParam.getSFSArrayValue();
+                var bullets:Object = bulletsParam.getSFSArrayValue();
                 for (var i:int = 0; i < bullets.size(); i++) {
                     var bullet:SFSObject = bullets.getElementAt(i) as SFSObject;
 

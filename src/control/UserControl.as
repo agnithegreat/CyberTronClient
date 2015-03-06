@@ -8,9 +8,9 @@ import com.smartfoxserver.v2.entities.data.SFSObject;
 import flash.geom.Point;
 import flash.ui.Keyboard;
 
-import model.PersonageProps;
+import model.GlobalProps;
 
-import model.RequestProps;
+import model.PersonageProps;
 
 import starling.animation.IAnimatable;
 import starling.display.DisplayObject;
@@ -80,8 +80,8 @@ public class UserControl extends EventDispatcher implements IAnimatable {
         _shotCooldown -= time;
 
         if (_shotCooldown <= 0 && TouchLogger.isTouching) {
-            // TODO: use it from config
-            _shotCooldown = 0.3;
+            // TODO: use weapon from personage
+            _shotCooldown = GlobalProps.getWeapon("gun").cooldown;
 
             params = new SFSObject();
             params.putFloat(PersonageProps.DIRECTION, _direction);
