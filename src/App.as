@@ -227,11 +227,10 @@ public class App extends Sprite implements IStartable {
                 _roomScreen.cleanBullets();
             }
 
-
             var monstersParam: RoomVariable = room.getVariable("monsters");
             if (monstersParam) {
                 var monsters:ISFSArray = monstersParam.getSFSArrayValue();
-                for (var i:int = 0; i < monsters.size(); i++) {
+                for (i = 0; i < monsters.size(); i++) {
                     var monster:SFSObject = monsters.getElementAt(i) as SFSObject;
 
                     _roomScreen.updateMonster(monster);
