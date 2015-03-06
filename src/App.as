@@ -11,6 +11,7 @@ import com.smartfoxserver.v2.SmartFox;
 import com.smartfoxserver.v2.core.SFSEvent;
 import com.smartfoxserver.v2.entities.Room;
 import com.smartfoxserver.v2.entities.User;
+import com.smartfoxserver.v2.entities.data.ISFSArray;
 import com.smartfoxserver.v2.entities.data.SFSObject;
 import com.smartfoxserver.v2.entities.variables.RoomVariable;
 import com.smartfoxserver.v2.requests.ExtensionRequest;
@@ -31,6 +32,7 @@ import model.RequestProps;
 import starling.core.Starling;
 import starling.display.Sprite;
 import starling.events.Event;
+import starling.utils.transformCoords;
 
 import utils.KeyLogger;
 import utils.TouchLogger;
@@ -196,6 +198,7 @@ public class App extends Sprite implements IStartable {
     }
 
     private function onUserVarsUpdate(event:SFSEvent):void {
+//        trace("ON USER VARS UPDATE");
         var user : User = event.params.user;
         _roomScreen.updateUser(user);
 
@@ -222,6 +225,18 @@ public class App extends Sprite implements IStartable {
                     _roomScreen.updateBullet(bullet, user);
                 }
                 _roomScreen.cleanBullets();
+            }
+
+
+            var monstersParam: RoomVariable = room.getVariable("monsters");
+            if (monstersParam) {
+                var monsters:ISFSArray = monstersParam.getSFSArrayValue();
+                for (var i:int = 0; i < monsters.size(); i++) {
+                    var monster:SFSObject = monsters.getElementAt(i) as SFSObject;
+
+                    _roomScreen.updateMonster(monster);
+                }
+                _roomScreen.cleanMonsters();
             }
         }
     }

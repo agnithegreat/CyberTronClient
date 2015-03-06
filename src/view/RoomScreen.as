@@ -66,5 +66,15 @@ public class RoomScreen extends AbstractComponent {
     public function cleanBullets():void {
         field.cleanBullets();
     }
+
+    public function updateMonster(monster : SFSObject) : void
+    {
+        field.updateMonster(monster);
+    }
+
+    public function cleanMonsters() : void
+    {
+        field.cleanMonsters()
+    }
 }
 }

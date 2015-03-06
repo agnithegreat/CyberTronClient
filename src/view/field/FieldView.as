@@ -12,6 +12,7 @@ import com.smartfoxserver.v2.entities.data.SFSObject;
 import flash.utils.Dictionary;
 
 import model.BulletProps;
+import model.MonsterProps;
 
 import model.RequestProps;
 
@@ -37,6 +38,7 @@ public class FieldView extends AbstractComponent {
 
     private var _personages: Dictionary = new Dictionary(true);
     private var _bullets: Dictionary = new Dictionary(true);
+    private var _monsters: Dictionary = new Dictionary(true);
 
     private var _localPersonage: PersonageView;
     public function get localPersonage():PersonageView {
@@ -46,6 +48,7 @@ public class FieldView extends AbstractComponent {
     private var _container: AbstractComponent;
 
     private var _bulletCleans: int = 0;
+    private var _monsterCleans : int = 0;
 
     public function FieldView() {
         super();
@@ -98,6 +101,29 @@ public class FieldView extends AbstractComponent {
             }
         }
         _bulletCleans++;
+    }
+
+    public function updateMonster(monster : SFSObject) : void
+    {
+        var id: int = monster.getInt(MonsterProps.ID);
+
+        if (!_monsters[id]) {
+            _monsters[id] = new MonsterView();
+            _container.addChild(_monsters[id]);
+//            _monsters[id].bullet.color = _personages[user].color;
+        }
+        (_monsters[id] as MonsterView).update(monster, _monsterCleans);
+    }
+
+    public function cleanMonsters() : void
+    {
+        for (var key: int in _monsters) {
+            if (_monsters[key].cleanId < _monsterCleans) {
+                _monsters[key].destroy();
+                delete _monsters[key];
+            }
+        }
+        _monsterCleans++;
     }
 }
 }
