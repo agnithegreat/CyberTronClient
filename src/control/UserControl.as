@@ -30,6 +30,14 @@ public class UserControl extends EventDispatcher implements IAnimatable {
 
     private var _isShooting: Boolean;
 
+    private var _requestCounter: int = 0;
+    public function get requestCounter():int {
+        return _requestCounter;
+    }
+    public function set requestCounter(value: int):void {
+        _requestCounter = value;
+    }
+
     public function UserControl() {
     }
 
@@ -38,6 +46,8 @@ public class UserControl extends EventDispatcher implements IAnimatable {
     }
 
     public function advanceTime(time:Number):void {
+        _requestCounter++;
+
         var left: Boolean = KeyLogger.getKey(Keyboard.A) || KeyLogger.getKey(Keyboard.LEFT);
         var right: Boolean = KeyLogger.getKey(Keyboard.D) || KeyLogger.getKey(Keyboard.RIGHT);
         var up: Boolean = KeyLogger.getKey(Keyboard.W) || KeyLogger.getKey(Keyboard.UP);
@@ -51,6 +61,7 @@ public class UserControl extends EventDispatcher implements IAnimatable {
             _deltaY = deltaY;
 
             var params:ISFSObject = new SFSObject();
+            params.putInt(PersonageProps.REQ_ID, _requestCounter);
             params.putInt(PersonageProps.DELTAX, _deltaX);
             params.putInt(PersonageProps.DELTAY, _deltaY);
             dispatchEventWith(App.MOVE_USER_EVT, true, params);
@@ -70,6 +81,7 @@ public class UserControl extends EventDispatcher implements IAnimatable {
             _direction = direction;
 
             params = new SFSObject();
+            params.putInt(PersonageProps.REQ_ID, _requestCounter);
             params.putFloat(PersonageProps.DIRECTION, _direction);
             dispatchEventWith(App.ROTATE_USER_EVT, true, params);
         }
@@ -78,6 +90,7 @@ public class UserControl extends EventDispatcher implements IAnimatable {
             _isShooting = TouchLogger.isTouching;
 
             params = new SFSObject();
+            params.putInt(PersonageProps.REQ_ID, _requestCounter);
             params.putBool(PersonageProps.SHOOT, _isShooting);
             dispatchEventWith(App.SHOT_USER_EVT, true, params);
         }

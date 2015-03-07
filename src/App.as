@@ -14,6 +14,7 @@ import com.smartfoxserver.v2.entities.User;
 import com.smartfoxserver.v2.entities.data.ISFSArray;
 import com.smartfoxserver.v2.entities.data.SFSObject;
 import com.smartfoxserver.v2.entities.variables.RoomVariable;
+import com.smartfoxserver.v2.entities.variables.SFSUserVariable;
 import com.smartfoxserver.v2.requests.ExtensionRequest;
 import com.smartfoxserver.v2.requests.JoinRoomRequest;
 import com.smartfoxserver.v2.requests.LoginRequest;
@@ -27,6 +28,7 @@ import flash.ui.Mouse;
 
 import model.BulletProps;
 import model.GlobalProps;
+import model.PersonageProps;
 import model.RequestProps;
 
 import starling.core.Starling;
@@ -187,6 +189,11 @@ public class App extends Sprite implements IStartable {
 
     private function onRotate(event: Event):void {
         _sfs.send(new ExtensionRequest(RequestProps.REQ_ROTATE, event.data as SFSObject, _sfs.lastJoinedRoom));
+
+        var user: User = _sfs.mySelf;
+        var direction: Number = (event.data as SFSObject).getFloat(PersonageProps.DIRECTION);
+        user.setVariable(new SFSUserVariable(PersonageProps.DIRECTION, direction));
+        _roomScreen.updateUser(user);
     }
 
     private function onShot(event: Event):void {
@@ -200,7 +207,12 @@ public class App extends Sprite implements IStartable {
     private function onUserVarsUpdate(event:SFSEvent):void {
 //        trace("ON USER VARS UPDATE");
         var user : User = event.params.user;
-        _roomScreen.updateUser(user);
+
+        var reqId: int = user.getVariable(PersonageProps.REQ_ID).getIntValue();
+        if (reqId >= _userControl.requestCounter) {
+            _roomScreen.updateUser(user);
+            _userControl.requestCounter = reqId;
+        }
 
         if (_roomScreen.field.localPersonage) {
             _userControl.init(_roomScreen.field.localPersonage.dot);
