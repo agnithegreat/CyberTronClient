@@ -10,8 +10,8 @@ public class GlobalProps {
         return PROPERTIES.field;
     }
 
-    public static function get player():Object {
-        return PROPERTIES.player;
+    public static function get hero():Object {
+        return PROPERTIES.hero;
     }
 
     public static function get weapons():Object {
