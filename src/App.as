@@ -208,11 +208,11 @@ public class App extends Sprite implements IStartable {
 //        trace("ON USER VARS UPDATE");
         var user : User = event.params.user;
 
-        var reqId: int = user.getVariable(PersonageProps.REQ_ID).getIntValue();
-        if (reqId >= _userControl.requestCounter) {
+//        var reqId: int = user.getVariable(PersonageProps.REQ_ID).getIntValue();
+//        if (reqId >= _userControl.requestCounter) {
             _roomScreen.updateUser(user);
-            _userControl.requestCounter = reqId;
-        }
+//            _userControl.requestCounter = reqId;
+//        }
 
         if (_roomScreen.field.localPersonage) {
             _userControl.init(_roomScreen.field.localPersonage.dot);
