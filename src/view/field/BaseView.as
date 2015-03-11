@@ -33,8 +33,6 @@ public class BaseView extends AbstractComponent {
 
     override protected function initialize():void {
         createFromFlash(BasePlaceView, "gui");
-
-        trace(width, height);
     }
 }
 }

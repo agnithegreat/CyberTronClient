@@ -269,6 +269,8 @@ public class App extends Sprite implements IStartable {
                     case RoomProps.RESULT:
                         var win: Boolean = roomVar.getSFSObjectValue().getBool("win");
                         _sfs.send(new LeaveRoomRequest(room));
+
+                        onLogin(null);
                         break;
                 }
             }
@@ -283,10 +285,6 @@ public class App extends Sprite implements IStartable {
     private function onUserExitRoom(event:SFSEvent):void {
         var room:Room = event.params.room;
         _roomScreen.showUsers(room.userList);
-
-        if (room.userList.length == 0) {
-            setState(LOGGED);
-        }
     }
 
     private function onRoomJoinError(event:SFSEvent):void {
@@ -313,7 +311,6 @@ public class App extends Sprite implements IStartable {
 
     private function onLogin(event:SFSEvent):void {
         setState(LOGGED);
-        trace(event);
         _lobbyScreen.showRooms(_sfs.roomList);
     }
 
