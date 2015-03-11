@@ -17,6 +17,7 @@ import com.smartfoxserver.v2.entities.variables.RoomVariable;
 import com.smartfoxserver.v2.entities.variables.SFSUserVariable;
 import com.smartfoxserver.v2.requests.ExtensionRequest;
 import com.smartfoxserver.v2.requests.JoinRoomRequest;
+import com.smartfoxserver.v2.requests.LeaveRoomRequest;
 import com.smartfoxserver.v2.requests.LoginRequest;
 import com.smartfoxserver.v2.requests.RoomExtension;
 import com.smartfoxserver.v2.requests.game.CreateSFSGameRequest;
@@ -34,7 +35,6 @@ import model.RequestProps;
 import starling.core.Starling;
 import starling.display.Sprite;
 import starling.events.Event;
-import starling.utils.transformCoords;
 
 import utils.KeyLogger;
 import utils.TouchLogger;
@@ -249,6 +249,12 @@ public class App extends Sprite implements IStartable {
                 }
                 _roomScreen.cleanMonsters();
             }
+
+            var resultParam: RoomVariable = room.getVariable("result");
+            if (resultParam) {
+                var win: Boolean = resultParam.getSFSObjectValue().getBool("win");
+                _sfs.send(new LeaveRoomRequest(room));
+            }
         }
     }
 
@@ -260,6 +266,10 @@ public class App extends Sprite implements IStartable {
     private function onUserExitRoom(event:SFSEvent):void {
         var room:Room = event.params.room;
         _roomScreen.showUsers(room.userList);
+
+        if (room.userList.length == 0) {
+            setState(LOGGED);
+        }
     }
 
     private function onRoomJoinError(event:SFSEvent):void {
