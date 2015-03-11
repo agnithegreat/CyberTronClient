@@ -36,6 +36,8 @@ public class FieldView extends AbstractComponent {
         return back.height;
     }
 
+    private var _base: BaseView;
+
     private var _personages: Dictionary = new Dictionary(true);
     private var _bullets: Dictionary = new Dictionary(true);
     private var _monsters: Dictionary = new Dictionary(true);
@@ -57,8 +59,18 @@ public class FieldView extends AbstractComponent {
     override protected function initialize():void {
         createFromFlash(FieldContainerView, "gui");
 
+        _base = new BaseView();
+        addChild(_base);
+
         _container = new AbstractComponent();
         addChild(_container);
+    }
+
+    public function setBase(x: int, y: int, width: int, height: int):void {
+        _base.x = x;
+        _base.y = y;
+        _base.width = width;
+        _base.height = height;
     }
 
     public function showUsers(list: Array /* of User */):void {
@@ -103,20 +115,17 @@ public class FieldView extends AbstractComponent {
         _bulletCleans++;
     }
 
-    public function updateMonster(monster : SFSObject) : void
-    {
+    public function updateMonster(monster : SFSObject) : void {
         var id: int = monster.getInt(MonsterProps.ID);
 
         if (!_monsters[id]) {
             _monsters[id] = new MonsterView();
             _container.addChild(_monsters[id]);
-//            _monsters[id].bullet.color = _personages[user].color;
         }
         (_monsters[id] as MonsterView).update(monster, _monsterCleans);
     }
 
-    public function cleanMonsters() : void
-    {
+    public function cleanMonsters() : void {
         for (var key: int in _monsters) {
             if (_monsters[key].cleanId < _monsterCleans) {
                 _monsters[key].destroy();

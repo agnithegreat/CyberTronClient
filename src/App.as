@@ -13,6 +13,7 @@ import com.smartfoxserver.v2.entities.Room;
 import com.smartfoxserver.v2.entities.User;
 import com.smartfoxserver.v2.entities.data.ISFSArray;
 import com.smartfoxserver.v2.entities.data.SFSObject;
+import com.smartfoxserver.v2.entities.match.RoomProperties;
 import com.smartfoxserver.v2.entities.variables.RoomVariable;
 import com.smartfoxserver.v2.entities.variables.SFSUserVariable;
 import com.smartfoxserver.v2.requests.ExtensionRequest;
@@ -29,8 +30,10 @@ import flash.ui.Mouse;
 
 import model.BulletProps;
 import model.GlobalProps;
+import model.LevelProps;
 import model.PersonageProps;
 import model.RequestProps;
+import model.RoomProps;
 
 import starling.core.Starling;
 import starling.display.Sprite;
@@ -177,6 +180,7 @@ public class App extends Sprite implements IStartable {
             settings.isPublic = true;
             settings.minPlayersToStartGame = 2;
             settings.notifyGameStarted = true;
+            settings.maxVariables = 10;
             settings.extension = new RoomExtension("CyberTron", "com.toxicgames.cybertron.room.GameRoomExtension");
 
             _sfs.send(new CreateSFSGameRequest(settings));
@@ -220,40 +224,53 @@ public class App extends Sprite implements IStartable {
     }
 
     private function onRoomVarsUpdate(event:SFSEvent):void {
+        var changedVars: Array = event.params.changedVars;
+
         var room: Room = event.params.room;
         if (room) {
-            var dataParam: RoomVariable = room.getVariable("data");
-            if (dataParam) {
-                GlobalProps.PROPERTIES = dataParam.getSFSObjectValue().toObject();
-            }
+            for (var i:int = 0; i < changedVars.length; i++) {
+                var roomVar: RoomVariable = room.getVariable(changedVars[i]);
+                switch (changedVars[i]) {
+                    case RoomProps.CONFIG:
+                        GlobalProps.PROPERTIES = roomVar.getSFSObjectValue().toObject();
+                        break;
 
-            var bulletsParam: RoomVariable = room.getVariable("bullets");
-            if (bulletsParam) {
-                var bullets:Object = bulletsParam.getSFSArrayValue();
-                for (var i:int = 0; i < bullets.size(); i++) {
-                    var bullet:SFSObject = bullets.getElementAt(i) as SFSObject;
+                    case RoomProps.LEVEL:
+                        LevelProps.LEVEL = roomVar.getSFSObjectValue().toObject();
 
-                    var user:User = room.getUserById(bullet.getInt(BulletProps.USER));
-                    _roomScreen.updateBullet(bullet, user);
+                        _roomScreen.setBase(LevelProps.base);
+                        break;
+
+                    case RoomProps.BULLETS:
+                        var bullets:Object = roomVar.getSFSArrayValue();
+                        for (var j:int = 0; j < bullets.size(); j++) {
+                            var bullet:SFSObject = bullets.getElementAt(j) as SFSObject;
+
+                            var user:User = room.getUserById(bullet.getInt(BulletProps.USER));
+                            _roomScreen.updateBullet(bullet, user);
+                        }
+                        _roomScreen.cleanBullets();
+                        break;
+
+                    case RoomProps.MONSTERS:
+                        var monsters:ISFSArray = roomVar.getSFSArrayValue();
+                        for (i = 0; i < monsters.size(); i++) {
+                            var monster:SFSObject = monsters.getElementAt(i) as SFSObject;
+
+                            _roomScreen.updateMonster(monster);
+                        }
+                        _roomScreen.cleanMonsters();
+                        break;
+
+                    case RoomProps.BASE:
+                        trace(roomVar.getSFSObjectValue().getInt("hp"));
+                        break;
+
+                    case RoomProps.RESULT:
+                        var win: Boolean = roomVar.getSFSObjectValue().getBool("win");
+                        _sfs.send(new LeaveRoomRequest(room));
+                        break;
                 }
-                _roomScreen.cleanBullets();
-            }
-
-            var monstersParam: RoomVariable = room.getVariable("monsters");
-            if (monstersParam) {
-                var monsters:ISFSArray = monstersParam.getSFSArrayValue();
-                for (i = 0; i < monsters.size(); i++) {
-                    var monster:SFSObject = monsters.getElementAt(i) as SFSObject;
-
-                    _roomScreen.updateMonster(monster);
-                }
-                _roomScreen.cleanMonsters();
-            }
-
-            var resultParam: RoomVariable = room.getVariable("result");
-            if (resultParam) {
-                var win: Boolean = resultParam.getSFSObjectValue().getBool("win");
-                _sfs.send(new LeaveRoomRequest(room));
             }
         }
     }

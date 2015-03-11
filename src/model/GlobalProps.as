@@ -10,6 +10,10 @@ public class GlobalProps {
         return PROPERTIES.field;
     }
 
+    public static function get base():Object {
+        return PROPERTIES.base;
+    }
+
     public static function get hero():Object {
         return PROPERTIES.hero;
     }

@@ -46,6 +46,10 @@ public class RoomScreen extends AbstractComponent {
         field.height = 600;
     }
 
+    public function setBase(data: Object):void {
+        field.setBase(data.x, data.y, data.width, data.height)
+    }
+
     public function showRoom(name: String):void {
         room.showRoom(name);
     }

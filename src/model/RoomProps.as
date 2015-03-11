@@ -4,7 +4,13 @@
 package model {
 public class RoomProps {
 
-    public static const DATA: String = "data";
+    public static const CONFIG: String = "config";
+    public static const LEVEL: String = "level";
+
     public static const BULLETS: String = "bullets";
+    public static const MONSTERS:String = "monsters";
+    public static const BASE:String = "base";
+
+    public static const RESULT:String = "result";
 }
 }
