@@ -5,13 +5,12 @@ package control {
 import com.smartfoxserver.v2.entities.data.ISFSObject;
 import com.smartfoxserver.v2.entities.data.SFSObject;
 
-import flash.geom.Point;
 import flash.ui.Keyboard;
 
-import model.PersonageProps;
+import model.entities.Hero;
+import model.properties.PersonageProps;
 
 import starling.animation.IAnimatable;
-import starling.display.DisplayObject;
 import starling.events.EventDispatcher;
 
 import utils.KeyLogger;
@@ -19,9 +18,7 @@ import utils.TouchLogger;
 
 public class UserControl extends EventDispatcher implements IAnimatable {
 
-    private static const local: Point = new Point();
-
-    private var _user: DisplayObject;
+    private var _hero: Hero;
 
     private var _deltaX: int = 0;
     private var _deltaY: int = 0;
@@ -41,8 +38,8 @@ public class UserControl extends EventDispatcher implements IAnimatable {
     public function UserControl() {
     }
 
-    public function init(user: DisplayObject):void {
-        _user = user;
+    public function init(hero: Hero):void {
+        _hero = hero;
     }
 
     public function advanceTime(time:Number):void {
@@ -68,13 +65,13 @@ public class UserControl extends EventDispatcher implements IAnimatable {
         }
 
 
-        if (!_user) {
+        if (!_hero) {
             return;
         }
 
-        var place: Point = _user.localToGlobal(local);
-        var dx: Number = TouchLogger.touch.x - place.x;
-        var dy: Number = TouchLogger.touch.y - place.y;
+        // TODO: field offset
+        var dx: Number = TouchLogger.touch.x - _hero.x;
+        var dy: Number = TouchLogger.touch.y - _hero.y;
         var direction: Number = Math.atan2(dy, dx);
 
         if (_direction != direction) {

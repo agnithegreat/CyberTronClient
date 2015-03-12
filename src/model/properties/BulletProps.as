@@ -1,8 +1,8 @@
 /**
  * Created by kirillvirich on 06.03.15.
  */
-package model {
-public class MonsterProps {
+package model.properties {
+public class BulletProps {
 
     public static const ID: String = "id";
     public static const USER: String = "user";

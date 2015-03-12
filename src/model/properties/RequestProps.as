@@ -1,7 +1,7 @@
 /**
  * Created by mor on 04.03.2015.
  */
-package model {
+package model.properties {
 
 public class RequestProps {
 

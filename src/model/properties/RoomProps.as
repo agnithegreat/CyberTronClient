@@ -1,7 +1,7 @@
 /**
  * Created by kirillvirich on 06.03.15.
  */
-package model {
+package model.properties {
 public class RoomProps {
 
     public static const CONFIG: String = "config";

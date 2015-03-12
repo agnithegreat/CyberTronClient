@@ -13,9 +13,7 @@ import com.smartfoxserver.v2.entities.Room;
 import com.smartfoxserver.v2.entities.User;
 import com.smartfoxserver.v2.entities.data.ISFSArray;
 import com.smartfoxserver.v2.entities.data.SFSObject;
-import com.smartfoxserver.v2.entities.match.RoomProperties;
 import com.smartfoxserver.v2.entities.variables.RoomVariable;
-import com.smartfoxserver.v2.entities.variables.SFSUserVariable;
 import com.smartfoxserver.v2.requests.ExtensionRequest;
 import com.smartfoxserver.v2.requests.JoinRoomRequest;
 import com.smartfoxserver.v2.requests.LeaveRoomRequest;
@@ -28,12 +26,19 @@ import control.UserControl;
 
 import flash.ui.Mouse;
 
-import model.BulletProps;
-import model.GlobalProps;
-import model.LevelProps;
-import model.PersonageProps;
-import model.RequestProps;
-import model.RoomProps;
+import model.entities.Bullet;
+import model.entities.Enemy;
+
+import model.entities.Game;
+import model.entities.Hero;
+
+import model.properties.BulletProps;
+import model.properties.GlobalProps;
+import model.properties.LevelProps;
+import model.properties.MonsterProps;
+import model.properties.PersonageProps;
+import model.properties.RequestProps;
+import model.properties.RoomProps;
 
 import starling.core.Starling;
 import starling.display.Sprite;
@@ -59,6 +64,8 @@ public class App extends Sprite implements IStartable {
 
     private var _sfs:SmartFox;
 
+    private var _game: Game;
+
     private var _userControl: UserControl;
 
     private var _mainMenu: MainMenu;
@@ -77,6 +84,8 @@ public class App extends Sprite implements IStartable {
     private function initGUI():void {
         Resources.addAtlas("gui", AtlasFactory.fromAtlasMC(Atlas1));
 
+        _game = new Game();
+
         _mainMenu = new MainMenu();
         addChild(_mainMenu);
         _mainMenu.addEventListener(Event.TRIGGERED, onConnect);
@@ -87,6 +96,7 @@ public class App extends Sprite implements IStartable {
 
         _roomScreen = new RoomScreen();
         addChild(_roomScreen);
+        _roomScreen.field.init(_game);
     }
 
     private function initConnection():void {
@@ -194,10 +204,9 @@ public class App extends Sprite implements IStartable {
     private function onRotate(event: Event):void {
         _sfs.send(new ExtensionRequest(RequestProps.REQ_ROTATE, event.data as SFSObject, _sfs.lastJoinedRoom));
 
-        var user: User = _sfs.mySelf;
-        var direction: Number = (event.data as SFSObject).getFloat(PersonageProps.DIRECTION);
-        user.setVariable(new SFSUserVariable(PersonageProps.DIRECTION, direction));
-        _roomScreen.updateUser(user);
+        var hero: Hero = _game.getHero(_sfs.mySelf.id);
+        hero.direction = (event.data as SFSObject).getFloat(PersonageProps.DIRECTION);
+        hero.update();
     }
 
     private function onShot(event: Event):void {
@@ -209,22 +218,33 @@ public class App extends Sprite implements IStartable {
     }
 
     private function onUserVarsUpdate(event:SFSEvent):void {
-//        trace("ON USER VARS UPDATE");
+        if (!GlobalProps.PROPERTIES) {
+            return;
+        }
+
         var user : User = event.params.user;
 
-//        var reqId: int = user.getVariable(PersonageProps.REQ_ID).getIntValue();
-//        if (reqId >= _userControl.requestCounter) {
-            _roomScreen.updateUser(user);
-//            _userControl.requestCounter = reqId;
-//        }
+        var hero: Hero = _game.getHero(user.id);
+        if (!hero) {
+            _game.addHero(user);
+            hero = _game.getHero(user.id);
+        }
+        hero.x = user.getVariable(PersonageProps.POSX).getIntValue();
+        hero.y = user.getVariable(PersonageProps.POSY).getIntValue();
+        if (user.getVariable(PersonageProps.DIRECTION)) {
+            hero.direction = user.getVariable(PersonageProps.DIRECTION).getDoubleValue();
+        }
+        hero.update();
 
-        if (_roomScreen.field.localPersonage) {
-            _userControl.init(_roomScreen.field.localPersonage.dot);
+        if (_game.getHero(_sfs.mySelf.id)) {
+            _userControl.init(_game.getHero(_sfs.mySelf.id));
         }
     }
 
     private function onRoomVarsUpdate(event:SFSEvent):void {
         var changedVars: Array = event.params.changedVars;
+
+        var user: User;
 
         var room: Room = event.params.room;
         if (room) {
@@ -244,22 +264,38 @@ public class App extends Sprite implements IStartable {
                     case RoomProps.BULLETS:
                         var bullets:Object = roomVar.getSFSArrayValue();
                         for (var j:int = 0; j < bullets.size(); j++) {
-                            var bullet:SFSObject = bullets.getElementAt(j) as SFSObject;
+                            var bulletObj:SFSObject = bullets.getElementAt(j) as SFSObject;
 
-                            var user:User = room.getUserById(bullet.getInt(BulletProps.USER));
-                            _roomScreen.updateBullet(bullet, user);
+                            user = room.getUserById(bulletObj.getInt(BulletProps.USER));
+                            var bullet: Bullet = _game.getBullet(bulletObj.getInt(BulletProps.ID));
+                            if (!bullet) {
+                                _game.addBullet(bulletObj.toObject());
+                                bullet = _game.getBullet(bulletObj.getInt(BulletProps.ID));
+                                bullet.color = _game.getHero(user.id).color;
+                            }
+                            bullet.x = bulletObj.getInt(BulletProps.POSX);
+                            bullet.y = bulletObj.getInt(BulletProps.POSY);
+                            bullet.direction = bulletObj.getInt(BulletProps.DIRECTION);
+                            bullet.update();
                         }
-                        _roomScreen.cleanBullets();
                         break;
 
                     case RoomProps.MONSTERS:
                         var monsters:ISFSArray = roomVar.getSFSArrayValue();
                         for (i = 0; i < monsters.size(); i++) {
-                            var monster:SFSObject = monsters.getElementAt(i) as SFSObject;
+                            var monsterData:SFSObject = monsters.getElementAt(i) as SFSObject;
 
-                            _roomScreen.updateMonster(monster);
+                            user = room.getUserById(monsterData.getInt(MonsterProps.USER));
+                            var monster: Enemy = _game.getEnemy(monsterData.getInt(MonsterProps.ID));
+                            if (!monster) {
+                                _game.addEnemy(monsterData.toObject());
+                                monster = _game.getEnemy(monsterData.getInt(MonsterProps.ID));
+                            }
+                            monster.x = monsterData.getInt(MonsterProps.POSX);
+                            monster.y = monsterData.getInt(MonsterProps.POSY);
+                            monster.direction = monsterData.getInt(MonsterProps.DIRECTION);
+                            monster.update();
                         }
-                        _roomScreen.cleanMonsters();
                         break;
 
                     case RoomProps.BASE:
