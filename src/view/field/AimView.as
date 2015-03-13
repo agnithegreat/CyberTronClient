@@ -14,8 +14,6 @@ import utils.TouchLogger;
 
 public class AimView extends AbstractComponent implements IAnimatable{
 
-    private static const local: Point = new Point();
-
     public function AimView() {
         super();
     }
