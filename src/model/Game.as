@@ -1,10 +1,14 @@
 /**
  * Created by kirillvirich on 12.03.15.
  */
-package model.entities {
+package model {
 import com.smartfoxserver.v2.entities.User;
 
 import flash.utils.Dictionary;
+
+import model.entities.Bullet;
+import model.entities.Enemy;
+import model.entities.Hero;
 
 import model.properties.GlobalProps;
 import model.properties.PersonageProps;

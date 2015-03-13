@@ -28,9 +28,9 @@ import flash.ui.Mouse;
 
 import model.entities.Bullet;
 import model.entities.Enemy;
-
-import model.entities.Game;
 import model.entities.Hero;
+
+import model.Game;
 
 import model.properties.BulletProps;
 import model.properties.GlobalProps;

@@ -11,7 +11,7 @@ import flash.utils.Dictionary;
 
 import model.entities.Bullet;
 import model.entities.Enemy;
-import model.entities.Game;
+import model.Game;
 import model.entities.Hero;
 
 import starling.events.Event;
