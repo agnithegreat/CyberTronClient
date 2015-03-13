@@ -37,5 +37,12 @@ public class BulletView extends AbstractComponent {
         y = _bullet.y;
         bullet.rotation = _bullet.direction;
     }
+
+    override public function destroy():void {
+        _bullet.removeEventListener(GameItem.UPDATE, handleUpdate);
+        _bullet = null;
+
+        super.destroy();
+    }
 }
 }

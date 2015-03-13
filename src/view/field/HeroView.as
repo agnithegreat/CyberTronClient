@@ -51,5 +51,12 @@ public class HeroView extends AbstractComponent {
 
         dot.rotation = _hero.direction;
     }
+
+    override public function destroy():void {
+        _hero.removeEventListener(GameItem.UPDATE, handleUpdate);
+        _hero = null;
+
+        super.destroy();
+    }
 }
 }

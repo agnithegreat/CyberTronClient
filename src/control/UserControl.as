@@ -5,6 +5,7 @@ package control {
 import com.smartfoxserver.v2.entities.data.ISFSObject;
 import com.smartfoxserver.v2.entities.data.SFSObject;
 
+import flash.geom.Point;
 import flash.ui.Keyboard;
 
 import model.entities.Hero;
@@ -17,6 +18,10 @@ import utils.KeyLogger;
 import utils.TouchLogger;
 
 public class UserControl extends EventDispatcher implements IAnimatable {
+
+    public static const MOVE : String = "move_UserControl";
+    public static const ROTATE : String = "rotate_UserControl";
+    public static const SHOT : String = "shot_UserControl";
 
     private var _hero: Hero;
 
@@ -61,7 +66,7 @@ public class UserControl extends EventDispatcher implements IAnimatable {
             params.putInt(PersonageProps.REQ_ID, _requestCounter);
             params.putInt(PersonageProps.DELTAX, _deltaX);
             params.putInt(PersonageProps.DELTAY, _deltaY);
-            dispatchEventWith(App.MOVE_USER_EVT, true, params);
+            dispatchEventWith(MOVE, true, params);
         }
 
 
@@ -69,9 +74,9 @@ public class UserControl extends EventDispatcher implements IAnimatable {
             return;
         }
 
-        // TODO: field offset
-        var dx: Number = TouchLogger.touch.x - _hero.x;
-        var dy: Number = TouchLogger.touch.y - _hero.y;
+        var touch: Point = TouchLogger.getTouchByName("field");
+        var dx: Number = touch.x - _hero.x;
+        var dy: Number = touch.y - _hero.y;
         var direction: Number = Math.atan2(dy, dx);
 
         if (_direction != direction) {
@@ -80,7 +85,7 @@ public class UserControl extends EventDispatcher implements IAnimatable {
             params = new SFSObject();
             params.putInt(PersonageProps.REQ_ID, _requestCounter);
             params.putFloat(PersonageProps.DIRECTION, _direction);
-            dispatchEventWith(App.ROTATE_USER_EVT, true, params);
+            dispatchEventWith(ROTATE, true, params);
         }
 
         if (_isShooting != TouchLogger.isTouching) {
@@ -89,7 +94,7 @@ public class UserControl extends EventDispatcher implements IAnimatable {
             params = new SFSObject();
             params.putInt(PersonageProps.REQ_ID, _requestCounter);
             params.putBool(PersonageProps.SHOOT, _isShooting);
-            dispatchEventWith(App.SHOT_USER_EVT, true, params);
+            dispatchEventWith(SHOT, true, params);
         }
     }
 }

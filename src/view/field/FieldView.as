@@ -16,6 +16,8 @@ import model.entities.Hero;
 
 import starling.events.Event;
 
+import utils.TouchLogger;
+
 public class FieldView extends AbstractComponent {
 
     public function get back():Scale9Picture {
@@ -58,13 +60,20 @@ public class FieldView extends AbstractComponent {
 
         _container = new AbstractComponent();
         addChild(_container);
+
+        TouchLogger.setTarget("field", this);
     }
 
     public function init(game: Game):void {
         _game = game;
+
         _game.addEventListener(Game.ADD_HERO, handleAddHero);
         _game.addEventListener(Game.ADD_ENEMY, handleAddEnemy);
         _game.addEventListener(Game.ADD_BULLET, handleAddBullet);
+
+        _game.addEventListener(Game.REMOVE_HERO, handleRemoveHero);
+        _game.addEventListener(Game.REMOVE_ENEMY, handleRemoveEnemy);
+        _game.addEventListener(Game.REMOVE_BULLET, handleRemoveBullet);
     }
 
     public function setBase(x: int, y: int, width: int, height: int):void {
@@ -90,6 +99,24 @@ public class FieldView extends AbstractComponent {
         var bullet: Bullet = e.data as Bullet;
         _bullets[bullet] = new BulletView(bullet);
         _container.addChild(_bullets[bullet]);
+    }
+
+    private function handleRemoveHero(e: Event):void {
+        var hero: Hero = e.data as Hero;
+        (_personages[hero] as HeroView).destroy();
+        delete _personages[hero];
+    }
+
+    private function handleRemoveEnemy(e: Event):void {
+        var enemy: Enemy = e.data as Enemy;
+        (_enemies[enemy] as EnemyView).destroy();
+        delete _enemies[enemy];
+    }
+
+    private function handleRemoveBullet(e: Event):void {
+        var bullet: Bullet = e.data as Bullet;
+        (_bullets[bullet] as BulletView).destroy();
+        delete _bullets[bullet];
     }
 }
 }

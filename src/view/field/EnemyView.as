@@ -41,5 +41,12 @@ public class EnemyView extends AbstractComponent {
         y = _enemy.y;
         dot.rotation = _enemy.direction;
     }
+
+    override public function destroy():void {
+        _enemy.removeEventListener(GameItem.UPDATE, handleUpdate);
+        _enemy = null;
+
+        super.destroy();
+    }
 }
 }

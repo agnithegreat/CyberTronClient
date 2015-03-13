@@ -3,7 +3,9 @@
  */
 package utils {
 import flash.geom.Point;
+import flash.utils.Dictionary;
 
+import starling.display.DisplayObject;
 import starling.display.Stage;
 import starling.events.Touch;
 import starling.events.TouchEvent;
@@ -11,11 +13,17 @@ import starling.events.TouchPhase;
 
 public class TouchLogger {
 
-    private static var _stage: Stage;
+    private static var _stage: DisplayObject;
+
+    private static var _targets: Dictionary = new Dictionary(true);
 
     private static var _touch: Point;
-    public static function get touch():Point {
-        return _touch;
+    public static function getTouchByName(name: String):Point {
+        var target: DisplayObject = _targets[name];
+        return target ? target.globalToLocal(_touch) : null;
+    }
+    public static function getTouchByTarget(target: DisplayObject):Point {
+        return target ? target.globalToLocal(_touch) : null;
     }
 
     private static var _touching: Boolean;
@@ -28,6 +36,10 @@ public class TouchLogger {
         _stage.addEventListener(TouchEvent.TOUCH, onTouch);
 
         _touch = new Point();
+    }
+
+    public static function setTarget(name: String, target: DisplayObject):void {
+        _targets[name] = target;
     }
 
     private static function onTouch(event: TouchEvent):void {

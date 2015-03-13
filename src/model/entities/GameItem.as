@@ -22,5 +22,9 @@ public class GameItem extends EventDispatcher {
     public function update():void {
         dispatchEventWith(UPDATE);
     }
+
+    public function destroy():void {
+        settings = null;
+    }
 }
 }
