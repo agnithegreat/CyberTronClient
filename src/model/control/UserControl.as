@@ -76,6 +76,7 @@ public class UserControl extends EventDispatcher implements IAnimatable {
 
         var params:ISFSObject = new SFSObject();
         params.putInt(PersonageProps.REQ_ID, _inputCounter);
+        params.putDouble(PersonageProps.TIME, time);
         params.putInt(PersonageProps.DELTAX, _deltaX);
         params.putInt(PersonageProps.DELTAY, _deltaY);
         dispatchEventWith(MOVE, false, params);

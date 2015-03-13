@@ -6,6 +6,7 @@ package model.properties {
 public class PersonageProps {
 
     public static const REQ_ID: String = "req_id";
+    public static const TIME: String = "time";
 
     public static const POSX: String = "posX";
     public static const POSY: String = "posY";
