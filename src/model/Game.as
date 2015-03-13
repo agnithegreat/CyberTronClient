@@ -6,11 +6,12 @@ import com.smartfoxserver.v2.entities.User;
 
 import flash.utils.Dictionary;
 
+import model.entities.Base;
 import model.entities.Bullet;
 import model.entities.Enemy;
 import model.entities.Hero;
-import model.properties.BulletProps;
 
+import model.properties.BulletProps;
 import model.properties.GlobalProps;
 import model.properties.MonsterProps;
 import model.properties.PersonageProps;
@@ -19,6 +20,8 @@ import starling.events.EventDispatcher;
 
 public class Game extends EventDispatcher {
 
+    public static const SET_BASE: String = "set_base_Game";
+
     public static const ADD_HERO: String = "add_hero_Game";
     public static const ADD_ENEMY: String = "add_enemy_Game";
     public static const ADD_BULLET: String = "add_bullet_Game";
@@ -26,6 +29,11 @@ public class Game extends EventDispatcher {
     public static const REMOVE_HERO: String = "remove_hero_Game";
     public static const REMOVE_ENEMY: String = "remove_enemy_Game";
     public static const REMOVE_BULLET: String = "remove_bullet_Game";
+
+    private var _base: Base;
+    public function get base():Base {
+        return _base;
+    }
 
     private var _heroes: Dictionary;
     public function getHero(id: int):Hero {
@@ -46,6 +54,20 @@ public class Game extends EventDispatcher {
         _heroes = new Dictionary(true);
         _enemies = new Dictionary(true);
         _bullets = new Dictionary(true);
+    }
+
+    public function setBase(data: Object):void {
+        _base = new Base(data);
+        _base.x = data.x;
+        _base.y = data.y;
+        _base.width = data.width;
+        _base.height = data.height;
+
+        dispatchEventWith(SET_BASE, false, _base);
+    }
+    public function updateBase(hp: int):void {
+        _base.hp = hp;
+        _base.update();
     }
 
     public function addHero(user: User):void {
@@ -128,16 +150,16 @@ public class Game extends EventDispatcher {
             removeHero(id);
         }
     }
-    public function clearEnemies(except: Dictionary):void {
+    public function clearEnemies(except: Dictionary = null):void {
         for (var id: int in _enemies) {
-            if (!except[id]) {
+            if (!except || !except[id]) {
                 removeEnemy(id);
             }
         }
     }
-    public function clearBullets(except: Dictionary):void {
+    public function clearBullets(except: Dictionary = null):void {
         for (var id: int in _bullets) {
-            if (!except[id]) {
+            if (!except || !except[id]) {
                 removeBullet(id);
             }
         }

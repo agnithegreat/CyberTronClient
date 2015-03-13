@@ -1,14 +1,18 @@
 /**
  * Created by desktop on 03.03.2015.
  */
-package view {
+package view.screens {
 import assets.gui.LobbyScreenView;
 import assets.gui.RoomPanelView;
 
 import com.agnither.utils.gui.components.AbstractComponent;
 import com.agnither.utils.gui.components.Button;
 
+import controller.GameController;
+
 import flash.utils.Dictionary;
+
+import starling.events.Event;
 
 import view.lobby.LobbyPanel;
 
@@ -39,10 +43,15 @@ public class LobbyScreen extends AbstractComponent {
         lobby.height = stage.stageHeight;
 
         quickGameButton.label.text = "Quick Game";
+        quickGameButton.addEventListener(Event.TRIGGERED, handleConnect);
     }
 
     public function showRooms(list: Array /* of Room */):void {
         lobby.showRooms(list);
+    }
+
+    private function handleConnect(e: Event):void {
+        dispatchEventWith(GameController.COMMAND, true, GameController.QUICK_GAME);
     }
 }
 }

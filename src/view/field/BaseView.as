@@ -7,6 +7,8 @@ import assets.gui.BasePlaceView;
 import com.agnither.utils.gui.components.AbstractComponent;
 import com.agnither.utils.gui.components.Scale9Picture;
 
+import model.entities.Base;
+
 public class BaseView extends AbstractComponent {
 
     public function get back():Scale9Picture {
@@ -27,12 +29,19 @@ public class BaseView extends AbstractComponent {
         return back.height;
     }
 
-    public function BaseView() {
-        super();
+    private var _base: Base;
+
+    public function BaseView(base: Base) {
+        _base = base;
     }
 
     override protected function initialize():void {
         createFromFlash(BasePlaceView, "gui");
+
+        x = _base.x;
+        y = _base.y;
+        width = _base.width;
+        height = _base.height;
     }
 }
 }

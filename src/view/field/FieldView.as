@@ -9,10 +9,12 @@ import com.agnither.utils.gui.components.Scale9Picture;
 
 import flash.utils.Dictionary;
 
+import model.entities.Base;
+import model.entities.Hero;
 import model.entities.Bullet;
 import model.entities.Enemy;
+
 import model.Game;
-import model.entities.Hero;
 
 import starling.events.Event;
 
@@ -46,7 +48,8 @@ public class FieldView extends AbstractComponent {
     private var _enemies: Dictionary = new Dictionary(true);
     private var _bullets: Dictionary = new Dictionary(true);
 
-    private var _container: AbstractComponent;
+    private var _staticContainer: AbstractComponent;
+    private var _dynamicContainer: AbstractComponent;
 
     public function FieldView() {
 
@@ -55,17 +58,19 @@ public class FieldView extends AbstractComponent {
     override protected function initialize():void {
         createFromFlash(FieldContainerView, "gui");
 
-        _base = new BaseView();
-        addChild(_base);
+        _staticContainer = new AbstractComponent();
+        addChild(_staticContainer);
 
-        _container = new AbstractComponent();
-        addChild(_container);
+        _dynamicContainer = new AbstractComponent();
+        addChild(_dynamicContainer);
 
         TouchLogger.setTarget("field", this);
     }
 
     public function init(game: Game):void {
         _game = game;
+
+        _game.addEventListener(Game.SET_BASE, handleSetBase);
 
         _game.addEventListener(Game.ADD_HERO, handleAddHero);
         _game.addEventListener(Game.ADD_ENEMY, handleAddEnemy);
@@ -76,29 +81,27 @@ public class FieldView extends AbstractComponent {
         _game.addEventListener(Game.REMOVE_BULLET, handleRemoveBullet);
     }
 
-    public function setBase(x: int, y: int, width: int, height: int):void {
-        _base.x = x;
-        _base.y = y;
-        _base.width = width;
-        _base.height = height;
+    private function handleSetBase(e: Event):void {
+        _base = new BaseView(e.data as Base);
+        _staticContainer.addChild(_base);
     }
 
     private function handleAddHero(e: Event):void {
         var hero: Hero = e.data as Hero;
         _personages[hero] = new HeroView(hero);
-        _container.addChild(_personages[hero]);
+        _dynamicContainer.addChild(_personages[hero]);
     }
 
     private function handleAddEnemy(e: Event):void {
         var enemy: Enemy = e.data as Enemy;
         _enemies[enemy] = new EnemyView(enemy);
-        _container.addChild(_enemies[enemy]);
+        _dynamicContainer.addChild(_enemies[enemy]);
     }
 
     private function handleAddBullet(e: Event):void {
         var bullet: Bullet = e.data as Bullet;
         _bullets[bullet] = new BulletView(bullet);
-        _container.addChild(_bullets[bullet]);
+        _dynamicContainer.addChild(_bullets[bullet]);
     }
 
     private function handleRemoveHero(e: Event):void {

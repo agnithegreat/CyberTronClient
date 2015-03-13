@@ -1,7 +1,7 @@
 /**
  * Created by kirillvirich on 05.03.15.
  */
-package control {
+package model.control {
 import com.smartfoxserver.v2.entities.data.ISFSObject;
 import com.smartfoxserver.v2.entities.data.SFSObject;
 
@@ -66,9 +66,8 @@ public class UserControl extends EventDispatcher implements IAnimatable {
             params.putInt(PersonageProps.REQ_ID, _requestCounter);
             params.putInt(PersonageProps.DELTAX, _deltaX);
             params.putInt(PersonageProps.DELTAY, _deltaY);
-            dispatchEventWith(MOVE, true, params);
+            dispatchEventWith(MOVE, false, params);
         }
-
 
         if (!_hero) {
             return;
@@ -85,7 +84,7 @@ public class UserControl extends EventDispatcher implements IAnimatable {
             params = new SFSObject();
             params.putInt(PersonageProps.REQ_ID, _requestCounter);
             params.putFloat(PersonageProps.DIRECTION, _direction);
-            dispatchEventWith(ROTATE, true, params);
+            dispatchEventWith(ROTATE, false, params);
         }
 
         if (_isShooting != TouchLogger.isTouching) {
@@ -94,7 +93,7 @@ public class UserControl extends EventDispatcher implements IAnimatable {
             params = new SFSObject();
             params.putInt(PersonageProps.REQ_ID, _requestCounter);
             params.putBool(PersonageProps.SHOOT, _isShooting);
-            dispatchEventWith(SHOT, true, params);
+            dispatchEventWith(SHOT, false, params);
         }
     }
 }
