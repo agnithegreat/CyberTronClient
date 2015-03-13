@@ -164,7 +164,7 @@ public class SmartFoxConnector extends EventDispatcher {
         if (room) {
             for (var i:int = 0; i < changedVars.length; i++) {
                 var roomVar: RoomVariable = room.getVariable(changedVars[i]);
-                dispatchEventWith(ROOM_VARS_UPDATE, false, {name: changedVars[i], data: roomVar.getValue().toObject()});
+                dispatchEventWith(ROOM_VARS_UPDATE, false, {name: changedVars[i], data: roomVar.getValue()});
             }
         }
     }

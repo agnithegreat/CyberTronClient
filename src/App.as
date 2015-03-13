@@ -9,6 +9,8 @@ import com.agnither.utils.gui.atlas.AtlasFactory;
 
 import com.smartfoxserver.v2.entities.Room;
 import com.smartfoxserver.v2.entities.User;
+import com.smartfoxserver.v2.entities.data.ISFSArray;
+import com.smartfoxserver.v2.entities.data.ISFSObject;
 import com.smartfoxserver.v2.entities.data.SFSObject;
 
 import control.UserControl;
@@ -186,7 +188,7 @@ public class App extends Sprite implements IStartable {
         var user: User = e.data as User;
         _game.removeHero(user.id);
 
-        _roomScreen.showUsers(_connection.currentRoom.userList);
+        _roomScreen.showUsers(_connection.currentRoom ? _connection.currentRoom.userList : []);
     }
 
     private function handleConnectionLost(e: Event):void {
@@ -213,59 +215,56 @@ public class App extends Sprite implements IStartable {
     }
 
     private function handleRoomVarsUpdate(e: Event):void {
-        var name: String = e.data.name;
-        var data: Object = e.data.data;
-
         var except: Dictionary;
         var i: int;
 
-        switch (name) {
+        switch (e.data.name) {
             case RoomProps.CONFIG:
-                GlobalProps.PROPERTIES = data;
+                GlobalProps.PROPERTIES = e.data.data.toObject();
                 break;
 
             case RoomProps.LEVEL:
-                LevelProps.LEVEL = data;
+                LevelProps.LEVEL = e.data.data.toObject();
 
                 _roomScreen.setBase(LevelProps.base);
                 break;
 
             case RoomProps.MONSTERS:
-                except = new Dictionary();
-                var monsters: Array = data as Array;
-                for (i = 0; i < monsters.length; i++) {
-                    var monster: Object = monsters[i];
+                except = new Dictionary(true);
+                var monsters: ISFSArray = e.data.data as ISFSArray;
+                for (i = 0; i < monsters.size(); i++) {
+                    var monster: Object = (monsters.getElementAt(i) as ISFSObject).toObject();
 
                     if (!_game.getEnemy(monster.id)) {
                         _game.addEnemy(monster);
                     }
-                    except[monster.id] = _game.getEnemy(monster.id);
+                    except[monster.id] = true;
                     _game.updateEnemy(monster);
                 }
                 _game.clearEnemies(except);
                 break;
 
             case RoomProps.BULLETS:
-                except = new Dictionary();
-                var bullets: Array = data as Array;
-                for (var j:int = 0; j < bullets.length; j++) {
-                    var bullet: Object = bullets[i];
+                except = new Dictionary(true);
+                var bullets: ISFSArray = e.data.data as ISFSArray;
+                for (i = 0; i < bullets.size(); i++) {
+                    var bullet: Object = (bullets.getElementAt(i) as ISFSObject).toObject();
 
                     if (!_game.getBullet(bullet.id)) {
                         _game.addBullet(bullet);
                     }
-                    except[bullet.id] = _game.getBullet(bullet.id);
+                    except[bullet.id] = true;
                     _game.updateBullet(bullet);
                 }
                 _game.clearBullets(except);
                 break;
 
             case RoomProps.BASE:
-                trace(name, data.hp);
+                trace(e.data.name, e.data.data.toObject().hp);
                 break;
 
             case RoomProps.RESULT:
-                trace(name, data.win);
+                trace(e.data.name, e.data.data.toObject().win);
                 _connection.leaveRoom();
 
                 handleLoggedIn(null);
