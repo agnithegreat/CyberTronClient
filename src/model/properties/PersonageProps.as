@@ -16,5 +16,6 @@ public class PersonageProps {
     public static const DIRECTION: String = "direction";
     public static const SHOOT: String = "shoot";
     public static const SPEED: String = "speed";
+    public static const WEAPON: String = "weapon";
 }
 }

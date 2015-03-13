@@ -8,6 +8,7 @@ import model.entities.Base;
 import model.entities.Bullet;
 import model.entities.Enemy;
 import model.entities.Hero;
+import model.entities.Weapon;
 
 import model.properties.BulletProps;
 import model.properties.GlobalProps;
@@ -73,6 +74,7 @@ public class Game extends EventDispatcher {
         hero.id = data.id;
         hero.name = data.name;
         hero.color = data[PersonageProps.COLOR];
+        hero.weapon = new Weapon(GlobalProps.getWeapon(data[PersonageProps.WEAPON]));
         _heroes[hero.id] = hero;
 
         dispatchEventWith(ADD_HERO, false, hero);

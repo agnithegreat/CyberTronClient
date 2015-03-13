@@ -9,10 +9,12 @@ import flash.geom.Point;
 import flash.ui.Keyboard;
 
 import model.entities.Hero;
+import model.properties.BulletProps;
 import model.properties.GlobalProps;
 import model.properties.PersonageProps;
 
 import starling.animation.IAnimatable;
+import starling.core.Starling;
 import starling.events.EventDispatcher;
 
 import utils.KeyLogger;
@@ -45,6 +47,12 @@ public class UserControl extends EventDispatcher implements IAnimatable {
 
     public function init(hero: Hero):void {
         _hero = hero;
+
+        if (_hero) {
+            Starling.juggler.add(this);
+        } else {
+            Starling.juggler.remove(this);
+        }
 
         _inputCounter = 0;
         _pendingInputs = new <Input>[];
@@ -96,10 +104,28 @@ public class UserControl extends EventDispatcher implements IAnimatable {
 
         _isShooting = TouchLogger.isTouching;
 
-        params = new SFSObject();
-        params.putInt(PersonageProps.REQ_ID, _inputCounter);
-        params.putBool(PersonageProps.SHOOT, _isShooting);
-        dispatchEventWith(SHOT, false, params);
+        _hero.weapon.cooldown -= time;
+        if (_isShooting && _hero.weapon.cooldown <= 0) {
+            if (_hero.weapon.ammo <= 0) {
+                _hero.weapon.reload();
+            }
+            if (_hero.weapon.ammo > 0) {
+                _hero.weapon.shot();
+
+                var amount: int = _hero.weapon.getShotAmount();
+                var angle: Number = _hero.weapon.getSpread() / amount;
+                for (var i: int = 0; i < amount; i++) {
+                    var direction: Number = _direction + (i - amount/2) * angle;
+
+                    params = new SFSObject();
+                    params.putInt(PersonageProps.REQ_ID, _inputCounter);
+                    params.putInt(BulletProps.ID, ++_hero.weapon.counter);
+                    params.putInt(BulletProps.USER, _hero.id);
+                    params.putDouble(BulletProps.DIRECTION, direction);
+                    dispatchEventWith(SHOT, false, params);
+                }
+            }
+        }
 
 
         var input: Input = new Input();

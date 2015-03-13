@@ -10,6 +10,8 @@ public class Hero extends GameItem {
     public var color: int;
     public var direction: Number;
 
+    public var weapon: Weapon;
+
     public function Hero(settings: Object) {
         super(settings);
     }

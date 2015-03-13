@@ -26,7 +26,6 @@ import model.properties.RoomProps;
 
 import server.SmartFoxConnector;
 
-import starling.core.Starling;
 import starling.display.Sprite;
 import starling.events.Event;
 import starling.events.EventDispatcher;
@@ -113,16 +112,6 @@ public class GameController extends EventDispatcher {
 
     private function setState(state: String):void {
         dispatchEventWith(STATE_UPDATE, false, state);
-
-        switch (state) {
-            case INIT:
-            case LOGGED:
-                Starling.juggler.remove(_userControl);
-                break;
-            case JOINED:
-
-                break;
-        }
     }
 
     private function handleCommand(e: Event):void {
@@ -146,6 +135,12 @@ public class GameController extends EventDispatcher {
 
     private function onShot(event: Event):void {
         _connection.sendRequest(RequestProps.REQ_SHOT, event.data as SFSObject);
+//
+//        var bullet: Object = (event.data as SFSObject).toObject();
+//        if (!_game.getBullet(bullet.id)) {
+//            _game.addBullet(bullet);
+//        }
+//        _game.updateBullet(bullet);
     }
 
 
@@ -206,7 +201,6 @@ public class GameController extends EventDispatcher {
             var hero: Hero = _game.getHero(_connection.localUser.id);
             if (hero) {
                 _userControl.init(hero);
-                Starling.juggler.add(_userControl);
             }
         }
     }
@@ -261,8 +255,9 @@ public class GameController extends EventDispatcher {
 
             case RoomProps.RESULT:
                 trace(e.data.name, e.data.data.toObject().win);
-                _connection.leaveRoom();
+                _game.clearHeroes();
                 _userControl.init(null);
+                _connection.leaveRoom();
 
                 handleLoggedIn(null);
                 break;
