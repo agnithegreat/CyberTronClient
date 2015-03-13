@@ -9,6 +9,7 @@ import flash.geom.Point;
 import flash.ui.Keyboard;
 
 import model.entities.Hero;
+import model.properties.GlobalProps;
 import model.properties.PersonageProps;
 
 import starling.animation.IAnimatable;
@@ -32,12 +33,11 @@ public class UserControl extends EventDispatcher implements IAnimatable {
 
     private var _isShooting: Boolean;
 
-    private var _requestCounter: int = 0;
-    public function get requestCounter():int {
-        return _requestCounter;
-    }
-    public function set requestCounter(value: int):void {
-        _requestCounter = value;
+    private var _inputCounter: int;
+    private var _pendingInputs: Vector.<Input>;
+
+    public function get ready():Boolean {
+        return _hero != null;
     }
 
     public function UserControl() {
@@ -45,56 +45,90 @@ public class UserControl extends EventDispatcher implements IAnimatable {
 
     public function init(hero: Hero):void {
         _hero = hero;
+
+        _inputCounter = 0;
+        _pendingInputs = new <Input>[];
+    }
+
+    public function removeProcessedInputs(counter: int):void {
+        while (_pendingInputs.length > 0 && _pendingInputs[0].id <= counter) {
+            _pendingInputs.shift();
+        }
+    }
+
+    public function processPendingInputs():void {
+        var l: int = _pendingInputs.length;
+        for (var i:int = 0; i < l; i++) {
+            processInput(_pendingInputs[i]);
+        }
     }
 
     public function advanceTime(time:Number):void {
-        _requestCounter++;
+        _inputCounter++;
 
         var left: Boolean = KeyLogger.getKey(Keyboard.A) || KeyLogger.getKey(Keyboard.LEFT);
         var right: Boolean = KeyLogger.getKey(Keyboard.D) || KeyLogger.getKey(Keyboard.RIGHT);
         var up: Boolean = KeyLogger.getKey(Keyboard.W) || KeyLogger.getKey(Keyboard.UP);
         var down: Boolean = KeyLogger.getKey(Keyboard.S) || KeyLogger.getKey(Keyboard.DOWN);
 
-        var deltaX: int = int(right) - int(left);
-        var deltaY: int = int(down)  - int(up);
+        _deltaX = int(right) - int(left);
+        _deltaY = int(down)  - int(up);
 
-        if (_deltaX != deltaX || _deltaY != deltaY) {
-            _deltaX = deltaX;
-            _deltaY = deltaY;
+        var params:ISFSObject = new SFSObject();
+        params.putInt(PersonageProps.REQ_ID, _inputCounter);
+        params.putInt(PersonageProps.DELTAX, _deltaX);
+        params.putInt(PersonageProps.DELTAY, _deltaY);
+        dispatchEventWith(MOVE, false, params);
 
-            var params:ISFSObject = new SFSObject();
-            params.putInt(PersonageProps.REQ_ID, _requestCounter);
-            params.putInt(PersonageProps.DELTAX, _deltaX);
-            params.putInt(PersonageProps.DELTAY, _deltaY);
-            dispatchEventWith(MOVE, false, params);
-        }
-
-        if (!_hero) {
-            return;
-        }
 
         var touch: Point = TouchLogger.getTouchByName("field");
         var dx: Number = touch.x - _hero.x;
         var dy: Number = touch.y - _hero.y;
-        var direction: Number = Math.atan2(dy, dx);
 
-        if (_direction != direction) {
-            _direction = direction;
+        _direction = Math.atan2(dy, dx);
 
-            params = new SFSObject();
-            params.putInt(PersonageProps.REQ_ID, _requestCounter);
-            params.putFloat(PersonageProps.DIRECTION, _direction);
-            dispatchEventWith(ROTATE, false, params);
+        params = new SFSObject();
+        params.putInt(PersonageProps.REQ_ID, _inputCounter);
+        params.putFloat(PersonageProps.DIRECTION, _direction);
+        dispatchEventWith(ROTATE, false, params);
+
+
+        _isShooting = TouchLogger.isTouching;
+
+        params = new SFSObject();
+        params.putInt(PersonageProps.REQ_ID, _inputCounter);
+        params.putBool(PersonageProps.SHOOT, _isShooting);
+        dispatchEventWith(SHOT, false, params);
+
+
+        var input: Input = new Input();
+        input.id = _inputCounter;
+        input.time = time;
+        input.deltaX = _deltaX;
+        input.deltaY = _deltaY;
+        input.direction = _direction;
+        _pendingInputs.push(input);
+        processInput(input);
+    }
+
+    private function processInput(input: Input):void {
+        var distance: Number = Math.sqrt(input.deltaX*input.deltaX + input.deltaY*input.deltaY);
+        if (distance > 0) {
+            var delta: Number = GlobalProps.hero.speed/distance * input.time;
+            _hero.x += input.deltaX * delta;
+            _hero.y += input.deltaY * delta;
         }
-
-        if (_isShooting != TouchLogger.isTouching) {
-            _isShooting = TouchLogger.isTouching;
-
-            params = new SFSObject();
-            params.putInt(PersonageProps.REQ_ID, _requestCounter);
-            params.putBool(PersonageProps.SHOOT, _isShooting);
-            dispatchEventWith(SHOT, false, params);
-        }
+        _hero.direction = input.direction;
+        _hero.update();
     }
 }
+}
+
+class Input {
+    public var id: int;
+    public var time: Number;
+
+    public var deltaX: int;
+    public var deltaY: int;
+    public var direction: Number;
 }

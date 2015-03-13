@@ -15,6 +15,7 @@ import model.entities.Bullet;
 import model.entities.Enemy;
 
 import model.Game;
+import model.properties.GlobalProps;
 
 import starling.events.Event;
 
@@ -84,6 +85,9 @@ public class FieldView extends AbstractComponent {
     private function handleSetBase(e: Event):void {
         _base = new BaseView(e.data as Base);
         _staticContainer.addChild(_base);
+
+        width = GlobalProps.field.width;
+        height = GlobalProps.field.height;
     }
 
     private function handleAddHero(e: Event):void {

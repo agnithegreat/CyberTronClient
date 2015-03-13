@@ -2,8 +2,6 @@
  * Created by kirillvirich on 12.03.15.
  */
 package model {
-import com.smartfoxserver.v2.entities.User;
-
 import flash.utils.Dictionary;
 
 import model.entities.Base;
@@ -70,11 +68,11 @@ public class Game extends EventDispatcher {
         _base.update();
     }
 
-    public function addHero(user: User):void {
+    public function addHero(data: Object):void {
         var hero: Hero = new Hero(GlobalProps.hero);
-        hero.id = user.id;
-        hero.color = user.getVariable(PersonageProps.COLOR).getIntValue();
-        hero.name = user.name;
+        hero.id = data.id;
+        hero.name = data.name;
+        hero.color = data[PersonageProps.COLOR];
         _heroes[hero.id] = hero;
 
         dispatchEventWith(ADD_HERO, false, hero);
@@ -97,12 +95,16 @@ public class Game extends EventDispatcher {
     }
 
 
-    public function updateHero(user: User):void {
-        var hero: Hero = getHero(user.id);
-        hero.x = user.getVariable(PersonageProps.POSX).getIntValue();
-        hero.y = user.getVariable(PersonageProps.POSY).getIntValue();
-        if (user.getVariable(PersonageProps.DIRECTION)) {
-            hero.direction = user.getVariable(PersonageProps.DIRECTION).getDoubleValue();
+    public function updateHero(data: Object):void {
+        var hero: Hero = getHero(data.id);
+        if (data[PersonageProps.POSX]) {
+            hero.x = data[PersonageProps.POSX];
+        }
+        if (data[PersonageProps.POSY]) {
+            hero.y = data[PersonageProps.POSY];
+        }
+        if (data[PersonageProps.DIRECTION]) {
+            hero.direction = data[PersonageProps.DIRECTION];
         }
         hero.update();
     }

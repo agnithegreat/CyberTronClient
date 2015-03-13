@@ -10,8 +10,6 @@ import com.agnither.utils.gui.components.AbstractComponent;
 
 import flash.utils.Dictionary;
 
-import model.properties.GlobalProps;
-
 import view.field.FieldView;
 import view.room.RoomPanel;
 
@@ -41,9 +39,6 @@ public class RoomScreen extends AbstractComponent {
 
         room.width = 220;
         room.height = stage.stageHeight;
-
-        field.width = GlobalProps.field.width;
-        field.height = GlobalProps.field.height;
     }
 
     public function showRoom(name: String):void {

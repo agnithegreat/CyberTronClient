@@ -11,13 +11,16 @@ import com.smartfoxserver.v2.entities.User;
 import com.smartfoxserver.v2.entities.data.ISFSArray;
 import com.smartfoxserver.v2.entities.data.ISFSObject;
 import com.smartfoxserver.v2.entities.data.SFSObject;
+import com.smartfoxserver.v2.entities.variables.UserVariable;
 
 import flash.utils.Dictionary;
 
 import model.Game;
 import model.control.UserControl;
+import model.entities.Hero;
 import model.properties.GlobalProps;
 import model.properties.LevelProps;
+import model.properties.PersonageProps;
 import model.properties.RequestProps;
 import model.properties.RoomProps;
 
@@ -117,7 +120,7 @@ public class GameController extends EventDispatcher {
                 Starling.juggler.remove(_userControl);
                 break;
             case JOINED:
-                Starling.juggler.add(_userControl);
+
                 break;
         }
     }
@@ -139,10 +142,6 @@ public class GameController extends EventDispatcher {
 
     private function onRotate(event: Event):void {
         _connection.sendRequest(RequestProps.REQ_ROTATE, event.data as SFSObject);
-
-//        var hero: Hero = _game.getHero(_sfs.mySelf.id);
-//        hero.direction = (event.data as SFSObject).getFloat(PersonageProps.DIRECTION);
-//        hero.update();
     }
 
     private function onShot(event: Event):void {
@@ -188,14 +187,27 @@ public class GameController extends EventDispatcher {
         }
 
         var user: User = e.data as User;
-        if (!_game.getHero(user.id)) {
-            _game.addHero(user);
+        var vars: Array = user.getVariables();
+        var data: Object = {id: user.id, name: user.name};
+        for (var i:int = 0; i < vars.length; i++) {
+            var userVariable: UserVariable = vars[i];
+            data[userVariable.name] = userVariable.getValue();
         }
-        _game.updateHero(user);
 
-        // TODO: optimize usage
-        if (_game.getHero(_connection.localUser.id)) {
-            _userControl.init(_game.getHero(_connection.localUser.id));
+        if (!_game.getHero(data.id)) {
+            _game.addHero(data);
+        }
+        _game.updateHero(data);
+
+        if (_userControl.ready) {
+            _userControl.removeProcessedInputs(data[PersonageProps.REQ_ID]);
+            _userControl.processPendingInputs();
+        } else {
+            var hero: Hero = _game.getHero(_connection.localUser.id);
+            if (hero) {
+                _userControl.init(hero);
+                Starling.juggler.add(_userControl);
+            }
         }
     }
 
@@ -250,6 +262,7 @@ public class GameController extends EventDispatcher {
             case RoomProps.RESULT:
                 trace(e.data.name, e.data.data.toObject().win);
                 _connection.leaveRoom();
+                _userControl.init(null);
 
                 handleLoggedIn(null);
                 break;
