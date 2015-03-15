@@ -15,6 +15,8 @@ import model.entities.Bullet;
 import model.entities.Enemy;
 
 import model.Game;
+import model.entities.Tower;
+import model.entities.Wall;
 import model.properties.GlobalProps;
 
 import starling.events.Event;
@@ -45,6 +47,8 @@ public class FieldView extends AbstractComponent {
 
     private var _base: BaseView;
 
+    private var _walls: Dictionary = new Dictionary(true);
+    private var _towers: Dictionary = new Dictionary(true);
     private var _personages: Dictionary = new Dictionary(true);
     private var _enemies: Dictionary = new Dictionary(true);
     private var _bullets: Dictionary = new Dictionary(true);
@@ -73,6 +77,8 @@ public class FieldView extends AbstractComponent {
 
         _game.addEventListener(Game.SET_BASE, handleSetBase);
 
+        _game.addEventListener(Game.ADD_WALL, handleAddWall);
+        _game.addEventListener(Game.ADD_TOWER, handleAddTower);
         _game.addEventListener(Game.ADD_HERO, handleAddHero);
         _game.addEventListener(Game.ADD_ENEMY, handleAddEnemy);
         _game.addEventListener(Game.ADD_BULLET, handleAddBullet);
@@ -88,6 +94,18 @@ public class FieldView extends AbstractComponent {
 
         width = GlobalProps.field.width;
         height = GlobalProps.field.height;
+    }
+
+    private function handleAddWall(e: Event):void {
+        var wall: Wall = e.data as Wall;
+        _walls[wall] = new WallView(wall);
+        _staticContainer.addChild(_walls[wall]);
+    }
+
+    private function handleAddTower(e: Event):void {
+        var tower: Tower = e.data as Tower;
+        _towers[tower] = new TowerView(tower);
+        _staticContainer.addChild(_towers[tower]);
     }
 
     private function handleAddHero(e: Event):void {

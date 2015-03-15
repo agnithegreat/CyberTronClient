@@ -216,7 +216,7 @@ public class GameController extends EventDispatcher {
 
             case RoomProps.LEVEL:
                 LevelProps.LEVEL = e.data.data.toObject();
-                _game.setBase(LevelProps.base);
+                _game.init();
                 break;
 
             case RoomProps.MONSTERS:

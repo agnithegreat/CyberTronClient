@@ -8,10 +8,13 @@ import model.entities.Base;
 import model.entities.Bullet;
 import model.entities.Enemy;
 import model.entities.Hero;
+import model.entities.Tower;
+import model.entities.Wall;
 import model.entities.Weapon;
 
 import model.properties.BulletProps;
 import model.properties.GlobalProps;
+import model.properties.LevelProps;
 import model.properties.MonsterProps;
 import model.properties.PersonageProps;
 
@@ -21,6 +24,8 @@ public class Game extends EventDispatcher {
 
     public static const SET_BASE: String = "set_base_Game";
 
+    public static const ADD_WALL: String = "add_wall_Game";
+    public static const ADD_TOWER: String = "add_tower_Game";
     public static const ADD_HERO: String = "add_hero_Game";
     public static const ADD_ENEMY: String = "add_enemy_Game";
     public static const ADD_BULLET: String = "add_bullet_Game";
@@ -33,6 +38,9 @@ public class Game extends EventDispatcher {
     public function get base():Base {
         return _base;
     }
+
+    private var _walls: Dictionary;
+    private var _towers: Dictionary;
 
     private var _heroes: Dictionary;
     public function getHero(id: int):Hero {
@@ -50,9 +58,27 @@ public class Game extends EventDispatcher {
     }
 
     public function Game() {
+        _walls = new Dictionary(true);
+        _towers = new Dictionary(true);
         _heroes = new Dictionary(true);
         _enemies = new Dictionary(true);
         _bullets = new Dictionary(true);
+    }
+
+    public function init():void {
+        setBase(LevelProps.base);
+
+        for (var i:int = 0; i < LevelProps.walls.length; i++) {
+            var wall: Object = LevelProps.walls[i];
+            wall.id = i;
+            addWall(wall);
+        }
+
+        for (i = 0; i < LevelProps.towers.length; i++) {
+            var tower: Object = LevelProps.towers[i];
+            tower.id = i;
+            addTower(tower);
+        }
     }
 
     public function setBase(data: Object):void {
@@ -69,6 +95,30 @@ public class Game extends EventDispatcher {
         _base.update();
     }
 
+    public function addWall(data: Object):void {
+        var wall: Wall = new Wall(null);
+//        var wall: Wall = new Wall(GlobalProps.getWall());
+        wall.id = data.id;
+        wall.x = data.x;
+        wall.y = data.y;
+        wall.width = data.width;
+        wall.height = data.height;
+        _walls[wall.id] = wall;
+
+        dispatchEventWith(ADD_WALL, false, wall);
+    }
+    public function addTower(data: Object):void {
+        var tower: Tower = new Tower(null);
+//        var tower: Tower = new Tower(GlobalProps.getTower());
+        tower.id = data.id;
+        tower.x = data.x;
+        tower.y = data.y;
+        tower.width = data.width;
+        tower.height = data.height;
+        _towers[tower.id] = tower;
+
+        dispatchEventWith(ADD_TOWER, false, tower);
+    }
     public function addHero(data: Object):void {
         var hero: Hero = new Hero(GlobalProps.hero);
         hero.id = data.id;
@@ -90,7 +140,7 @@ public class Game extends EventDispatcher {
     public function addBullet(data: Object):void {
         var bullet: Bullet = new Bullet(GlobalProps.getWeapon("m4"));
         bullet.id = data.id;
-        bullet.color = getHero(data.user).color;
+        bullet.color = data.user ? getHero(data.user).color : 0xFF000000;
         _bullets[bullet.id] = bullet;
 
         dispatchEventWith(ADD_BULLET, false, bullet);

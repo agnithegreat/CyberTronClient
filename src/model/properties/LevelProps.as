@@ -14,6 +14,14 @@ public class LevelProps {
         return LEVEL.base;
     }
 
+    public static function get walls():Array {
+        return LEVEL.walls;
+    }
+
+    public static function get towers():Array {
+        return LEVEL.towers;
+    }
+
     public static function get heroes():Array {
         return LEVEL.heroes;
     }
