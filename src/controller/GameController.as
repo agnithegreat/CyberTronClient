@@ -44,6 +44,8 @@ public class GameController extends EventDispatcher {
     public static const COMMAND: String = "command";
     public static const CONNECT: String = "command.connect";
     public static const QUICK_GAME: String = "command.quick_game";
+    public static const NEW_GAME: String = "command.new_game";
+    public static const JOIN_GAME: String = "command.join_game";
 
     public static const STATE_UPDATE: String = "state_update_GameController";
     public static const ROOMS_UPDATE: String = "rooms_update_GameController";
@@ -115,12 +117,18 @@ public class GameController extends EventDispatcher {
     }
 
     private function handleCommand(e: Event):void {
-        switch (e.data) {
+        switch (e.data.type) {
             case CONNECT:
                 _connection.connect();
                 break;
             case QUICK_GAME:
-                _connection.joinQuickGame();
+                _connection.quickGame();
+                break;
+            case NEW_GAME:
+                _connection.newGame();
+                break;
+            case JOIN_GAME:
+                _connection.joinGame(e.data.name);
                 break;
         }
     }

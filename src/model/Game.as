@@ -68,6 +68,8 @@ public class Game extends EventDispatcher {
     public function init():void {
         setBase(LevelProps.base);
 
+        return;
+
         for (var i:int = 0; i < LevelProps.walls.length; i++) {
             var wall: Object = LevelProps.walls[i];
             wall.id = i;
@@ -178,6 +180,7 @@ public class Game extends EventDispatcher {
 
     public function removeHero(id: int):void {
         var hero: Hero = _heroes[id];
+        if(!hero) return;
         hero.destroy();
         delete _heroes[id];
 

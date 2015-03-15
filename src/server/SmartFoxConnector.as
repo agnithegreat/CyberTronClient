@@ -68,7 +68,7 @@ public class SmartFoxConnector extends EventDispatcher {
         _sfs.loadConfig();
     }
 
-    public function joinQuickGame():void {
+    public function quickGame():void {
         var room:Room = null;
 
         var gameRooms: Array = _sfs.getRoomListFromGroup("game");
@@ -81,23 +81,33 @@ public class SmartFoxConnector extends EventDispatcher {
         }
 
         if (room) {
-            _sfs.send(new JoinRoomRequest(room.name));
+            joinGame(room.name);
         } else {
-            var roomName:String = "Game_" + (new Date()).time;
-            roomName = roomName.substr(0, 32);
-
-            var settings: SFSGameSettings = new SFSGameSettings(roomName);
-            settings.groupId = "game";
-            settings.maxUsers = 4;
-            settings.maxSpectators = 0;
-            settings.isPublic = true;
-            settings.minPlayersToStartGame = 2;
-            settings.notifyGameStarted = true;
-            settings.maxVariables = 10;
-            settings.extension = new RoomExtension("CyberTron", "com.toxicgames.cybertron.room.GameRoomExtension");
-
-            _sfs.send(new CreateSFSGameRequest(settings));
+            newGame();
         }
+    }
+
+    public function joinGame($name : String) : void
+    {
+        _sfs.send(new JoinRoomRequest($name));
+    }
+
+    public function newGame() : void
+    {
+        var roomName:String = "Game_" + (new Date()).time;
+        roomName = roomName.substr(0, 32);
+
+        var settings: SFSGameSettings = new SFSGameSettings(roomName);
+        settings.groupId = "game";
+        settings.maxUsers = 4;
+        settings.maxSpectators = 0;
+        settings.isPublic = true;
+        settings.minPlayersToStartGame = 2;
+        settings.notifyGameStarted = true;
+        settings.maxVariables = 10;
+        settings.extension = new RoomExtension("CyberTron", "com.toxicgames.cybertron.room.GameRoomExtension");
+
+        _sfs.send(new CreateSFSGameRequest(settings));
     }
 
     public function leaveRoom():void {
@@ -168,5 +178,7 @@ public class SmartFoxConnector extends EventDispatcher {
             }
         }
     }
+
+
 }
 }
