@@ -94,18 +94,24 @@ public class FieldView extends AbstractComponent {
 
         width = GlobalProps.field.width;
         height = GlobalProps.field.height;
+
+        _staticContainer.flatten();
     }
 
     private function handleAddWall(e: Event):void {
+        _staticContainer.unflatten();
+
         var wall: Wall = e.data as Wall;
         _walls[wall] = new WallView(wall);
         _staticContainer.addChild(_walls[wall]);
+
+        _staticContainer.flatten();
     }
 
     private function handleAddTower(e: Event):void {
         var tower: Tower = e.data as Tower;
         _towers[tower] = new TowerView(tower);
-        _staticContainer.addChild(_towers[tower]);
+        _dynamicContainer.addChild(_towers[tower]);
     }
 
     private function handleAddHero(e: Event):void {
