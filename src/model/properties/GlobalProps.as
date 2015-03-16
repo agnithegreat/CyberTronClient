@@ -31,11 +31,6 @@ public class GlobalProps {
     }
 
     public static function getWeapon(name: String):Object {
-        if(!name)
-        {
-            return PROPERTIES.weapons["m4"];
-        }
-
         return PROPERTIES.weapons[name];
     }
 }

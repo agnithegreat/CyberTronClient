@@ -3,7 +3,6 @@
  */
 package view.screens {
 import assets.gui.LobbyScreenView;
-import assets.gui.RoomPanelView;
 
 import com.agnither.utils.gui.components.AbstractComponent;
 import com.agnither.utils.gui.components.Button;
@@ -14,17 +13,13 @@ import controller.GameController;
 import flash.utils.Dictionary;
 
 import starling.events.Event;
-import starling.text.TextField;
 
-import view.lobby.LobbyPanel;
 import view.lobby.LobbyTilelist;
 
 public class LobbyScreen extends AbstractComponent {
 
-
     override protected function getManifest():Dictionary {
         var manifest: Dictionary = new Dictionary(true);
-//        manifest[RoomPanelView] = LobbyPanel;
         manifest[GamesTiles] = LobbyTilelist;
         return manifest;
     }
@@ -56,9 +51,6 @@ public class LobbyScreen extends AbstractComponent {
     override protected function initialize():void {
         createFromFlash(LobbyScreenView, "gui");
 
-//        lobby.width = stage.stageWidth;
-//        lobby.height = stage.stageHeight;
-
         quickGameButton.label.text = "Quick Game";
         quickGameButton.addEventListener(Event.TRIGGERED, handleConnect);
 
@@ -73,11 +65,9 @@ public class LobbyScreen extends AbstractComponent {
 
         (getChild("chatTitle") as Label).text = "Chat";
         (getChild("gamesTitle") as Label).text = "Games";
-
     }
 
-    private function sendMessage(event : Event) : void
-    {
+    private function sendMessage(event: Event):void {
 
     }
 
@@ -95,7 +85,7 @@ public class LobbyScreen extends AbstractComponent {
                 break;
             case joinGameButton:
                 /**
-                 * TODO get name from selected line
+                 * TODO get id of selected item
                  */
 //                dispatchEventWith(GameController.COMMAND, true, {type :GameController.JOIN_GAME, name:""});
                 break;

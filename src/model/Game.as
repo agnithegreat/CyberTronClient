@@ -68,8 +68,6 @@ public class Game extends EventDispatcher {
     public function init():void {
         setBase(LevelProps.base);
 
-        return;
-
         for (var i:int = 0; i < LevelProps.walls.length; i++) {
             var wall: Object = LevelProps.walls[i];
             wall.id = i;

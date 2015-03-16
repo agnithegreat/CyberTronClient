@@ -71,7 +71,6 @@ public class View extends Sprite {
                 _roomScreen.visible = true;
                 break;
         }
-
     }
 
     private function handleRoomsUpdate(e: Event):void {

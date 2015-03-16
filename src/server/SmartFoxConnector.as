@@ -87,13 +87,11 @@ public class SmartFoxConnector extends EventDispatcher {
         }
     }
 
-    public function joinGame($name : String) : void
-    {
+    public function joinGame($name: String):void {
         _sfs.send(new JoinRoomRequest($name));
     }
 
-    public function newGame() : void
-    {
+    public function newGame():void {
         var roomName:String = "Game_" + (new Date()).time;
         roomName = roomName.substr(0, 32);
 
@@ -178,7 +176,5 @@ public class SmartFoxConnector extends EventDispatcher {
             }
         }
     }
-
-
 }
 }

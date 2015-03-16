@@ -21,7 +21,6 @@ public class MainMenu extends AbstractComponent {
     }
 
     override protected function initialize():void {
-
         createFromFlash(MainMenuScreenView, "gui");
 
         connectButton.label.text = "Connect";
@@ -30,10 +29,6 @@ public class MainMenu extends AbstractComponent {
 
     private function handleConnect(e: Event):void {
         dispatchEventWith(GameController.COMMAND, true, {type:GameController.CONNECT});
-
-
-
-
     }
 }
 }

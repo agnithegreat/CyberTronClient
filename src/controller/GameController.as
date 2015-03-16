@@ -143,12 +143,6 @@ public class GameController extends EventDispatcher {
 
     private function onShot(event: Event):void {
         _connection.sendRequest(RequestProps.REQ_SHOT, event.data as SFSObject);
-//
-//        var bullet: Object = (event.data as SFSObject).toObject();
-//        if (!_game.getBullet(bullet.id)) {
-//            _game.addBullet(bullet);
-//        }
-//        _game.updateBullet(bullet);
     }
 
 

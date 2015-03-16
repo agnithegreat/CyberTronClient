@@ -57,7 +57,6 @@ public class LobbyTilelist extends AbstractComponent {
             tile.label.text = room.name;
             tile.getChild("selectedBack").visible = false;
         }
-
     }
 
     private function clearRooms():void {
